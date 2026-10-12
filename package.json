@@ -1,0 +1,13 @@
+{
+  "name": "proof-grant-live-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy:studionet": "node scripts/deploy_studionet.mjs",
+    "test:live": "node scripts/live_e2e.mjs"
+  },
+  "dependencies": {
+    "genlayer-js": "1.1.8",
+    "keytar": "7.9.0"
+  }
+}

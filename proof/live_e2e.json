@@ -1,0 +1,257 @@
+{
+  "ok": true,
+  "testedAt": "2026-10-12T23:37:02.136Z",
+  "network": "GenLayer StudioNet",
+  "chainId": 61999,
+  "contract": "0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46",
+  "funder": "0x1c2e587043568239B2fcaeC5f96F278EB134b7f5",
+  "grantee": "0x034d85C75b3902892C2F1D5887744Ab65d333176",
+  "repositoryEvidence": {
+    "repository": "https://github.com/genlayerlabs/genlayer-js",
+    "ref": "main",
+    "negativeControlPath": "proofgrant-live-evidence/absent-file-2026-10-13.txt"
+  },
+  "scenarios": [
+    {
+      "scenario": 1,
+      "title": "GenLayer JS package-manifest verification grant — 2026-10-13",
+      "expectedOutcome": "PASSED",
+      "grantId": "grant-1",
+      "milestoneId": "ms-1",
+      "repository": "https://github.com/genlayerlabs/genlayer-js",
+      "repositoryRef": "main",
+      "criterion": {
+        "criterion_id": "crit-1",
+        "criterion_type": "GIT_REPO_STATE",
+        "description": "The genlayerlabs/genlayer-js main branch resolves to a live commit and contains package.json at the repository root",
+        "expected_body_contains": "",
+        "expected_status_max": 0,
+        "expected_status_min": 0,
+        "onchain_contract_address": "",
+        "onchain_event_topic0": "",
+        "onchain_min_block": 0,
+        "onchain_rpc_url": "",
+        "repo_path_expected": "package.json",
+        "repo_ref": "main",
+        "repo_url": "https://github.com/genlayerlabs/genlayer-js",
+        "target_url": "",
+        "weight_bps": 10000
+      },
+      "criterionResult": {
+        "criterion_id": "crit-1",
+        "detail": "ref_exists=True path_ok=True",
+        "passed": true
+      },
+      "finalMilestone": {
+        "active_challenge_id": "",
+        "challenge_window_closes_at": 1791934366,
+        "challenge_window_opens_at": 1791847966,
+        "challenge_window_seconds": 86400,
+        "claim_note": "Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on 2026-10-13.",
+        "claim_submitted_at": 1791847966,
+        "claimable_after": 0,
+        "claimed_artifact_hash": "ca948cb946e2176d2bdd1c6566d3d51495673117322952f4ad9a17dac1006ae1",
+        "criteria_ids": [
+          "crit-1"
+        ],
+        "evaluated_at": 1791847966,
+        "grant_id": "grant-1",
+        "index": 0,
+        "milestone_id": "ms-1",
+        "recommended_payout_bps": 10000,
+        "result_ids": [
+          "res-1"
+        ],
+        "reward_deposited": "1000000",
+        "reward_wei": "1000000",
+        "status": "CHALLENGE_WINDOW",
+        "title": "GenLayer JS package-manifest verification grant — 2026-10-13 — repository evidence checkpoint",
+        "verdict": "PASSED"
+      },
+      "transactions": {
+        "create": "0x3d7494700952280eb857a3c667399c9ae2116ff83b3fa10bbde2d0bdf875dd52",
+        "claim": "0xb3e0c02e0bcc5402c58af843dc3d099c5941805e0b4e4a33fcb1d74660713019"
+      },
+      "agreeingValidators": 3
+    },
+    {
+      "scenario": 2,
+      "title": "GenLayer JS absent-artifact control grant — 2026-10-13",
+      "expectedOutcome": "FAILED then fully refunded",
+      "grantId": "grant-2",
+      "milestoneId": "ms-2",
+      "repository": "https://github.com/genlayerlabs/genlayer-js",
+      "repositoryRef": "main",
+      "criterion": {
+        "criterion_id": "crit-2",
+        "criterion_type": "GIT_REPO_STATE",
+        "description": "The genlayerlabs/genlayer-js main branch must contain the audit artifact at proofgrant-live-evidence/absent-file-2026-10-13.txt",
+        "expected_body_contains": "",
+        "expected_status_max": 0,
+        "expected_status_min": 0,
+        "onchain_contract_address": "",
+        "onchain_event_topic0": "",
+        "onchain_min_block": 0,
+        "onchain_rpc_url": "",
+        "repo_path_expected": "proofgrant-live-evidence/absent-file-2026-10-13.txt",
+        "repo_ref": "main",
+        "repo_url": "https://github.com/genlayerlabs/genlayer-js",
+        "target_url": "",
+        "weight_bps": 10000
+      },
+      "criterionResult": {
+        "criterion_id": "crit-2",
+        "detail": "ref_exists=True path_ok=False",
+        "passed": false
+      },
+      "failedMilestone": {
+        "active_challenge_id": "",
+        "challenge_window_closes_at": 0,
+        "challenge_window_opens_at": 0,
+        "challenge_window_seconds": 86400,
+        "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-13.txt is absent from the real public repository.",
+        "claim_submitted_at": 1791848053,
+        "claimable_after": 0,
+        "claimed_artifact_hash": "630a8296da6c80cb7b23514887458da3f4c84f09e7eb1d4b05e3743ebe3572d3",
+        "criteria_ids": [
+          "crit-2"
+        ],
+        "evaluated_at": 1791848053,
+        "grant_id": "grant-2",
+        "index": 0,
+        "milestone_id": "ms-2",
+        "recommended_payout_bps": 0,
+        "result_ids": [
+          "res-2"
+        ],
+        "reward_deposited": "2000000",
+        "reward_wei": "2000000",
+        "status": "FAILED",
+        "title": "GenLayer JS absent-artifact control grant — 2026-10-13 — repository evidence checkpoint",
+        "verdict": "FAILED"
+      },
+      "finalMilestone": {
+        "active_challenge_id": "",
+        "challenge_window_closes_at": 0,
+        "challenge_window_opens_at": 0,
+        "challenge_window_seconds": 86400,
+        "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-13.txt is absent from the real public repository.",
+        "claim_submitted_at": 1791848053,
+        "claimable_after": 0,
+        "claimed_artifact_hash": "630a8296da6c80cb7b23514887458da3f4c84f09e7eb1d4b05e3743ebe3572d3",
+        "criteria_ids": [
+          "crit-2"
+        ],
+        "evaluated_at": 1791848053,
+        "grant_id": "grant-2",
+        "index": 0,
+        "milestone_id": "ms-2",
+        "recommended_payout_bps": 0,
+        "result_ids": [
+          "res-2"
+        ],
+        "reward_deposited": "0",
+        "reward_wei": "2000000",
+        "status": "FAILED",
+        "title": "GenLayer JS absent-artifact control grant — 2026-10-13 — repository evidence checkpoint",
+        "verdict": "FAILED"
+      },
+      "transactions": {
+        "create": "0xa7a070a5ce902548dac589a799b99eb1d4485fd2d2b2d621b30fb12019869bcb",
+        "claim": "0xec263b5964665875a736886c30c8e0b858ce8a8d9f61432e9f5e96e13dec88f0",
+        "refund": "0x4314e65a8a8f1f8216357b80f536163ebeb6a8fc0b972b24813796744e2d5e76"
+      },
+      "agreeingValidators": 3
+    },
+    {
+      "scenario": 3,
+      "title": "GenLayer JS weighted repository completeness grant — 2026-10-13",
+      "expectedOutcome": "PARTIAL_PASS with deterministic 5000 bps recommendation",
+      "grantId": "grant-3",
+      "milestoneId": "ms-3",
+      "repository": "https://github.com/genlayerlabs/genlayer-js",
+      "repositoryRef": "main",
+      "criteria": [
+        {
+          "criterion_id": "crit-3",
+          "criterion_type": "GIT_REPO_STATE",
+          "description": "The genlayerlabs/genlayer-js main branch resolves and contains the public README.md documentation file",
+          "expected_body_contains": "",
+          "expected_status_max": 0,
+          "expected_status_min": 0,
+          "onchain_contract_address": "",
+          "onchain_event_topic0": "",
+          "onchain_min_block": 0,
+          "onchain_rpc_url": "",
+          "repo_path_expected": "README.md",
+          "repo_ref": "main",
+          "repo_url": "https://github.com/genlayerlabs/genlayer-js",
+          "target_url": "",
+          "weight_bps": 5000
+        },
+        {
+          "criterion_id": "crit-4",
+          "criterion_type": "GIT_REPO_STATE",
+          "description": "The same main branch contains the additional evidence artifact at proofgrant-live-evidence/absent-file-2026-10-13.txt",
+          "expected_body_contains": "",
+          "expected_status_max": 0,
+          "expected_status_min": 0,
+          "onchain_contract_address": "",
+          "onchain_event_topic0": "",
+          "onchain_min_block": 0,
+          "onchain_rpc_url": "",
+          "repo_path_expected": "proofgrant-live-evidence/absent-file-2026-10-13.txt",
+          "repo_ref": "main",
+          "repo_url": "https://github.com/genlayerlabs/genlayer-js",
+          "target_url": "",
+          "weight_bps": 5000
+        }
+      ],
+      "criterionResults": [
+        {
+          "criterion_id": "crit-3",
+          "detail": "ref_exists=True path_ok=True",
+          "passed": true
+        },
+        {
+          "criterion_id": "crit-4",
+          "detail": "ref_exists=True path_ok=False",
+          "passed": false
+        }
+      ],
+      "finalMilestone": {
+        "active_challenge_id": "",
+        "challenge_window_closes_at": 1791934577,
+        "challenge_window_opens_at": 1791848177,
+        "challenge_window_seconds": 86400,
+        "claim_note": "Weighted live audit of two immutable criteria against the same public main-branch snapshot: README presence and the explicit negative-control artifact path.",
+        "claim_submitted_at": 1791848177,
+        "claimable_after": 0,
+        "claimed_artifact_hash": "9ddb6fd29e527d34d12d327cd5c14cb8e6899f330317c9776f9c2910e2b4cfdc",
+        "criteria_ids": [
+          "crit-3",
+          "crit-4"
+        ],
+        "evaluated_at": 1791848177,
+        "grant_id": "grant-3",
+        "index": 0,
+        "milestone_id": "ms-3",
+        "recommended_payout_bps": 5000,
+        "result_ids": [
+          "res-3",
+          "res-4"
+        ],
+        "reward_deposited": "3000000",
+        "reward_wei": "3000000",
+        "status": "CHALLENGE_WINDOW",
+        "title": "GenLayer JS weighted repository completeness grant — 2026-10-13 — repository evidence checkpoint",
+        "verdict": "PARTIAL_PASS"
+      },
+      "transactions": {
+        "create": "0x5b77d1a11367af2aecf4c40f95a5f072ef9dc90ca60d428af78fe9223cfb8fce",
+        "claim": "0xbe018f6ea2faa490ecaf590c97474fa36db0472c5baf247c0da096b9eeb0f415"
+      },
+      "agreeingValidators": 3
+    }
+  ]
+}
