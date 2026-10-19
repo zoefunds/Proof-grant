@@ -1,17 +1,15 @@
 # ProofGrant verification guide
 
-This document describes the historical ProofGrant release and the consensus-binding remediation now in the repository. The public deployment and E2E target is exclusively GenLayer StudioNet chain `61999`.
-
-The listed deployed address is not the remediated source: GenLayer contracts are immutable. A new deployment and complete E2E run are required before describing this fix as live.
+This document describes the deployed ProofGrant release and its consensus-binding remediation. The public deployment and E2E target is exclusively GenLayer StudioNet chain `61999`.
 
 ## Verified release
 
-- Contract: `0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46`
-- Deployment transaction: `0x1aa284d305207b7f8c0b0136c2449653723ff9d077387a9490031bc7ca001d62`
+- Contract: `0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70`
+- Deployment transaction: `0xbff527f5ceed5ab1b61b50b95fe5f7d2542bf27208ebe67e33d07c8724e95e2e`
 - Deployment execution: `FINALIZED / SUCCESS / MAJORITY_AGREE`
-- Source SHA-256: `6aa4d2741d8e0e9f5df5c1b6b5c71187fa572cba1f965f69fcb6b1d67ec13bd5`
+- Source SHA-256: `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`
 - StudioNet schema: constructor plus 21 public methods
-- Historical local verification: 17 tests passed; all 3 GenVM lint checks passed
+- Local verification: 18 tests passed; all 3 GenVM lint checks passed
 - Live verification: 3 of 3 funded E2E scenarios passed on chain `61999`
 
 ## Local verification layers
@@ -87,7 +85,7 @@ The funder must have enough StudioNet GEN for the three deliberately small depos
 Run only against the intended chain-61999 contract:
 
 ```bash
-PROOF_GRANT_CONTRACT=0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46 npm run test:live
+PROOF_GRANT_CONTRACT=0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70 npm run test:live
 ```
 
 The runner is fixed to `chains.studionet`; the resulting evidence file must state `"network": "GenLayer StudioNet"` and `"chainId": 61999`.
@@ -101,8 +99,8 @@ The runner is fixed to `chains.studionet`; the resulting evidence file must stat
 - Deposit: `1,000,000` wei
 - Stored result: `ref_exists=True path_ok=True`
 - Final state: `PASSED`, payout recommendation `10000` bps, status `CHALLENGE_WINDOW`
-- Create transaction: `0x3d7494700952280eb857a3c667399c9ae2116ff83b3fa10bbde2d0bdf875dd52`
-- Claim transaction: `0xb3e0c02e0bcc5402c58af843dc3d099c5941805e0b4e4a33fcb1d74660713019`
+- Create transaction: `0x333c2050f6f3880e6044551835d9be7492e0875a814bc58db698dbcedcb35dc4`
+- Claim transaction: `0xf5f8f6a0d5e68f483ed2373927334d42188e342e46939940c0fdbd37241d66c3`
 
 ### Scenario 2: negative control and refund
 
@@ -112,9 +110,9 @@ The runner is fixed to `chains.studionet`; the resulting evidence file must stat
 - Stored result: `ref_exists=True path_ok=False`
 - Claim result: `FAILED`, payout recommendation `0` bps
 - Refund result: `reward_deposited` changed from `2000000` to `0`
-- Create transaction: `0xa7a070a5ce902548dac589a799b99eb1d4485fd2d2b2d621b30fb12019869bcb`
-- Claim transaction: `0xec263b5964665875a736886c30c8e0b858ce8a8d9f61432e9f5e96e13dec88f0`
-- Refund transaction: `0x4314e65a8a8f1f8216357b80f536163ebeb6a8fc0b972b24813796744e2d5e76`
+- Create transaction: `0x3b3d94f0697c745dcc0b8d407d7734d79527621de3413780ce4b670fe61b6428`
+- Claim transaction: `0x14946e21b1137577a4b2612a80afa8f2f571a3002c9d13ab71d7700fe06c163b`
+- Refund transaction: `0x245934ab3ce57f63c725de6354def02e7ca291794f6c2fca1f49435715046807`
 
 ### Scenario 3: deterministic weighted partial result
 
@@ -124,7 +122,7 @@ The runner is fixed to `chains.studionet`; the resulting evidence file must stat
 - Deposit: `3,000,000` wei
 - Stored results: one passing criterion and one failing criterion
 - Final state: `PARTIAL_PASS`, exact recommendation `5000` bps, status `CHALLENGE_WINDOW`
-- Create transaction: `0x5b77d1a11367af2aecf4c40f95a5f072ef9dc90ca60d428af78fe9223cfb8fce`
-- Claim transaction: `0xbe018f6ea2faa490ecaf590c97474fa36db0472c5baf247c0da096b9eeb0f415`
+- Create transaction: `0xeb73078d7ed071736fb695a4f540ef4e88575e4d02cc3bc93b40c7c17e643d5a`
+- Claim transaction: `0x7fc7bc9b78914a27c6f5da971a0d6ba2c28dd0517c5137973557a0dade44f850`
 
 Each claim receipt contained three `agree` votes, which was the validator quorum for the completed StudioNet rounds. The machine-readable source of truth is [`../proof/live_e2e.json`](../proof/live_e2e.json).

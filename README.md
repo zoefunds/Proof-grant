@@ -4,33 +4,24 @@ ProofGrant is a standalone GenLayer Intelligent Contract for evidence-verified g
 
 ## Release status
 
-The StudioNet deployment below is a historical, successfully tested release.
-It predates the consensus-binding remediation in the current source and must
-not be treated as the corrected release. GenLayer contracts are immutable: a
-new StudioNet deployment and E2E run are required before the remediated source
-can be called live.
-
-The current source SHA-256 is `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`.
-It adds complete validator bindings for every nondeterministic field used by
-milestone verdict/payout and challenge bond/bounty settlement.
-
-### Historical deployment
+The remediated source is deployed and E2E-verified on StudioNet. Its SHA-256
+is `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`.
 
 | Field | Value |
 | --- | --- |
 | Network | GenLayer StudioNet |
 | Chain ID | `61999` |
-| Contract | `0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46` |
+| Contract | `0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70` |
 | Contract class | `ProofGrant` |
-| Deployment transaction | `0x1aa284d305207b7f8c0b0136c2449653723ff9d077387a9490031bc7ca001d62` |
+| Deployment transaction | `0xbff527f5ceed5ab1b61b50b95fe5f7d2542bf27208ebe67e33d07c8724e95e2e` |
 | Deployment result | `FINALIZED / SUCCESS / MAJORITY_AGREE` |
 | Deployer | `0x1c2e587043568239B2fcaeC5f96F278EB134b7f5` |
-| Deployed source SHA-256 | `6aa4d2741d8e0e9f5df5c1b6b5c71187fa572cba1f965f69fcb6b1d67ec13bd5` (pre-remediation) |
+| Deployed source SHA-256 | `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797` |
 | GenVM runner | `v0.2.16` |
 | Python dependency | `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6` |
 | Constructor values | bond `2500000000000000000000` wei; frivolous slash `10000` bps; upheld bounty `2000` bps |
 
-The authoritative historical record is [`proof/deployment.json`](proof/deployment.json). The complete historical E2E results, including stored contract state and transaction hashes, are in [`proof/live_e2e.json`](proof/live_e2e.json).
+The authoritative deployment record is [`proof/deployment.json`](proof/deployment.json). The complete E2E results, including stored contract state and transaction hashes, are in [`proof/live_e2e.json`](proof/live_e2e.json).
 
 ## Consensus-binding remediation
 
@@ -48,13 +39,13 @@ never uses them to choose a verdict, payout, refund, slash, or bounty.
 
 ## Verified StudioNet E2E results
 
-All tests below ran on StudioNet chain `61999` on October 13, 2026. The funder was `0x1c2e587043568239B2fcaeC5f96F278EB134b7f5`; the grantee was `0x034d85C75b3902892C2F1D5887744Ab65d333176`. Validators fetched evidence from the real public [`genlayerlabs/genlayer-js`](https://github.com/genlayerlabs/genlayer-js) repository at ref `main`.
+All tests below ran on StudioNet chain `61999` on October 19, 2026. The funder was `0x1c2e587043568239B2fcaeC5f96F278EB134b7f5`; the grantee was `0x034d85C75b3902892C2F1D5887744Ab65d333176`. Validators fetched evidence from the real public [`genlayerlabs/genlayer-js`](https://github.com/genlayerlabs/genlayer-js) repository at ref `main`.
 
 | Scenario | Real criterion | Funded reward | Result | Transactions |
 | --- | --- | ---: | --- | --- |
-| Positive repository evidence | Root `package.json` exists | `1,000,000` wei | `PASSED`, 10000 bps, `CHALLENGE_WINDOW` | create `0x3d7494700952280eb857a3c667399c9ae2116ff83b3fa10bbde2d0bdf875dd52`; claim `0xb3e0c02e0bcc5402c58af843dc3d099c5941805e0b4e4a33fcb1d74660713019` |
-| Negative-control evidence | `proofgrant-live-evidence/absent-file-2026-10-13.txt` does not exist | `2,000,000` wei | `FAILED`, then fully refunded; escrow balance became `0` | create `0xa7a070a5ce902548dac589a799b99eb1d4485fd2d2b2d621b30fb12019869bcb`; claim `0xec263b5964665875a736886c30c8e0b858ce8a8d9f61432e9f5e96e13dec88f0`; refund `0x4314e65a8a8f1f8216357b80f536163ebeb6a8fc0b972b24813796744e2d5e76` |
-| Weighted mixed evidence | `README.md` exists at 5000 bps; negative-control path does not exist at 5000 bps | `3,000,000` wei | `PARTIAL_PASS`, exactly 5000 bps, `CHALLENGE_WINDOW` | create `0x5b77d1a11367af2aecf4c40f95a5f072ef9dc90ca60d428af78fe9223cfb8fce`; claim `0xbe018f6ea2faa490ecaf590c97474fa36db0472c5baf247c0da096b9eeb0f415` |
+| Positive repository evidence | Root `package.json` exists | `1,000,000` wei | `PASSED`, 10000 bps, `CHALLENGE_WINDOW` | create `0x333c2050f6f3880e6044551835d9be7492e0875a814bc58db698dbcedcb35dc4`; claim `0xf5f8f6a0d5e68f483ed2373927334d42188e342e46939940c0fdbd37241d66c3` |
+| Negative-control evidence | `proofgrant-live-evidence/absent-file-2026-10-13.txt` does not exist | `2,000,000` wei | `FAILED`, then fully refunded; escrow balance became `0` | create `0x3b3d94f0697c745dcc0b8d407d7734d79527621de3413780ce4b670fe61b6428`; claim `0x14946e21b1137577a4b2612a80afa8f2f571a3002c9d13ab71d7700fe06c163b`; refund `0x245934ab3ce57f63c725de6354def02e7ca291794f6c2fca1f49435715046807` |
+| Weighted mixed evidence | `README.md` exists at 5000 bps; negative-control path does not exist at 5000 bps | `3,000,000` wei | `PARTIAL_PASS`, exactly 5000 bps, `CHALLENGE_WINDOW` | create `0xeb73078d7ed071736fb695a4f540ef4e88575e4d02cc3bc93b40c7c17e643d5a`; claim `0x7fc7bc9b78914a27c6f5da971a0d6ba2c28dd0517c5137973557a0dade44f850` |
 
 Every claim finalized with validator quorum and three recorded `agree` votes. These are deliberately small test deposits; amounts are wei, not whole GEN.
 
@@ -93,6 +84,6 @@ genvm-lint contracts/proof_grant.py
 
 Expected result for the remediation: `18 passed` and `Lint passed (3 checks)`.
 
-To inspect the historical deployment, use StudioNet chain `61999` and address `0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46`. Deploying the remediated source will create a new immutable address.
+To inspect the deployed release, use StudioNet chain `61999` and address `0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70`.
 
 See [`docs/TESTING.md`](docs/TESTING.md) for exact live-test prerequisites and safety notes.

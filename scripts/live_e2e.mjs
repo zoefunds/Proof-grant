@@ -20,7 +20,8 @@ const granteeClient = createClient({ chain, account: grantee });
 const results = [];
 const repository = "https://github.com/genlayerlabs/genlayer-js";
 const repositoryRef = "main";
-const absentPath = "proofgrant-live-evidence/absent-file-2026-10-13.txt";
+const evidenceDate = new Date().toISOString().slice(0, 10);
+const absentPath = `proofgrant-live-evidence/absent-file-${evidenceDate}.txt`;
 
 const read = (client, functionName, args = []) => client.readContract({
   address: contract,
@@ -80,7 +81,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
 // Scenario 1: a real repository commit and package manifest are independently verified.
 {
   const opened = await createGrant({
-    title: "GenLayer JS package-manifest verification grant — 2026-10-13",
+    title: `GenLayer JS package-manifest verification grant — ${evidenceDate}`,
     rewardWei: 1_000_000n,
     criteria: [gitCriterion({
       description: "The genlayerlabs/genlayer-js main branch resolves to a live commit and contains package.json at the repository root",
@@ -88,7 +89,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
       weightBps: 10000,
     })],
   });
-  const claim = await write(granteeClient, "submit_milestone_claim", [opened.milestoneId, "Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on 2026-10-13."]);
+  const claim = await write(granteeClient, "submit_milestone_claim", [opened.milestoneId, `Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on ${evidenceDate}.`]);
   const milestone = await read(funderClient, "get_milestone", [opened.milestoneId]);
   if (milestone.verdict !== "PASSED" || milestone.status !== "CHALLENGE_WINDOW") {
     throw new Error(`scenario 1 expected PASSED/CHALLENGE_WINDOW: ${JSON.stringify(milestone)}`);
@@ -115,7 +116,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
 {
   const rewardWei = 2_000_000n;
   const opened = await createGrant({
-    title: "GenLayer JS absent-artifact control grant — 2026-10-13",
+    title: `GenLayer JS absent-artifact control grant — ${evidenceDate}`,
     rewardWei,
     criteria: [gitCriterion({
       description: `The genlayerlabs/genlayer-js main branch must contain the audit artifact at ${absentPath}`,
@@ -153,7 +154,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
 // Scenario 3: one real path passes and one absent path fails, producing exact 50% partial payout advice.
 {
   const opened = await createGrant({
-    title: "GenLayer JS weighted repository completeness grant — 2026-10-13",
+    title: `GenLayer JS weighted repository completeness grant — ${evidenceDate}`,
     rewardWei: 3_000_000n,
     criteria: [
       gitCriterion({

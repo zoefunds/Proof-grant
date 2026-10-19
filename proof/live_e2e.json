@@ -1,9 +1,9 @@
 {
   "ok": true,
-  "testedAt": "2026-10-12T23:37:02.136Z",
+  "testedAt": "2026-10-19T01:31:40.533Z",
   "network": "GenLayer StudioNet",
   "chainId": 61999,
-  "contract": "0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46",
+  "contract": "0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70",
   "funder": "0x1c2e587043568239B2fcaeC5f96F278EB134b7f5",
   "grantee": "0x034d85C75b3902892C2F1D5887744Ab65d333176",
   "repositoryEvidence": {
@@ -44,17 +44,17 @@
       },
       "finalMilestone": {
         "active_challenge_id": "",
-        "challenge_window_closes_at": 1791934366,
-        "challenge_window_opens_at": 1791847966,
+        "challenge_window_closes_at": 1792459637,
+        "challenge_window_opens_at": 1792373237,
         "challenge_window_seconds": 86400,
         "claim_note": "Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on 2026-10-13.",
-        "claim_submitted_at": 1791847966,
+        "claim_submitted_at": 1792373237,
         "claimable_after": 0,
-        "claimed_artifact_hash": "ca948cb946e2176d2bdd1c6566d3d51495673117322952f4ad9a17dac1006ae1",
+        "claimed_artifact_hash": "87b18508494e200ac4c73c330d59cea281364735ad8422cd62f3f220e6815425",
         "criteria_ids": [
           "crit-1"
         ],
-        "evaluated_at": 1791847966,
+        "evaluated_at": 1792373237,
         "grant_id": "grant-1",
         "index": 0,
         "milestone_id": "ms-1",
@@ -69,8 +69,8 @@
         "verdict": "PASSED"
       },
       "transactions": {
-        "create": "0x3d7494700952280eb857a3c667399c9ae2116ff83b3fa10bbde2d0bdf875dd52",
-        "claim": "0xb3e0c02e0bcc5402c58af843dc3d099c5941805e0b4e4a33fcb1d74660713019"
+        "create": "0x333c2050f6f3880e6044551835d9be7492e0875a814bc58db698dbcedcb35dc4",
+        "claim": "0xf5f8f6a0d5e68f483ed2373927334d42188e342e46939940c0fdbd37241d66c3"
       },
       "agreeingValidators": 3
     },
@@ -110,13 +110,13 @@
         "challenge_window_opens_at": 0,
         "challenge_window_seconds": 86400,
         "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-13.txt is absent from the real public repository.",
-        "claim_submitted_at": 1791848053,
+        "claim_submitted_at": 1792373326,
         "claimable_after": 0,
-        "claimed_artifact_hash": "630a8296da6c80cb7b23514887458da3f4c84f09e7eb1d4b05e3743ebe3572d3",
+        "claimed_artifact_hash": "5fb039e4aef6926301d0524e2de8f62802bc52a287d081812dcf15172abb0b7b",
         "criteria_ids": [
           "crit-2"
         ],
-        "evaluated_at": 1791848053,
+        "evaluated_at": 1792373326,
         "grant_id": "grant-2",
         "index": 0,
         "milestone_id": "ms-2",
@@ -136,13 +136,13 @@
         "challenge_window_opens_at": 0,
         "challenge_window_seconds": 86400,
         "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-13.txt is absent from the real public repository.",
-        "claim_submitted_at": 1791848053,
+        "claim_submitted_at": 1792373326,
         "claimable_after": 0,
-        "claimed_artifact_hash": "630a8296da6c80cb7b23514887458da3f4c84f09e7eb1d4b05e3743ebe3572d3",
+        "claimed_artifact_hash": "5fb039e4aef6926301d0524e2de8f62802bc52a287d081812dcf15172abb0b7b",
         "criteria_ids": [
           "crit-2"
         ],
-        "evaluated_at": 1791848053,
+        "evaluated_at": 1792373326,
         "grant_id": "grant-2",
         "index": 0,
         "milestone_id": "ms-2",
@@ -157,11 +157,11 @@
         "verdict": "FAILED"
       },
       "transactions": {
-        "create": "0xa7a070a5ce902548dac589a799b99eb1d4485fd2d2b2d621b30fb12019869bcb",
-        "claim": "0xec263b5964665875a736886c30c8e0b858ce8a8d9f61432e9f5e96e13dec88f0",
-        "refund": "0x4314e65a8a8f1f8216357b80f536163ebeb6a8fc0b972b24813796744e2d5e76"
+        "create": "0x3b3d94f0697c745dcc0b8d407d7734d79527621de3413780ce4b670fe61b6428",
+        "claim": "0x14946e21b1137577a4b2612a80afa8f2f571a3002c9d13ab71d7700fe06c163b",
+        "refund": "0x245934ab3ce57f63c725de6354def02e7ca291794f6c2fca1f49435715046807"
       },
-      "agreeingValidators": 3
+      "agreeingValidators": 4
     },
     {
       "scenario": 3,
@@ -221,18 +221,18 @@
       ],
       "finalMilestone": {
         "active_challenge_id": "",
-        "challenge_window_closes_at": 1791934577,
-        "challenge_window_opens_at": 1791848177,
+        "challenge_window_closes_at": 1792459854,
+        "challenge_window_opens_at": 1792373454,
         "challenge_window_seconds": 86400,
         "claim_note": "Weighted live audit of two immutable criteria against the same public main-branch snapshot: README presence and the explicit negative-control artifact path.",
-        "claim_submitted_at": 1791848177,
+        "claim_submitted_at": 1792373454,
         "claimable_after": 0,
-        "claimed_artifact_hash": "9ddb6fd29e527d34d12d327cd5c14cb8e6899f330317c9776f9c2910e2b4cfdc",
+        "claimed_artifact_hash": "136d0e64d17ceb3e555037e754872f99bc22cf34b2b16a35d4e2c134b4f1313c",
         "criteria_ids": [
           "crit-3",
           "crit-4"
         ],
-        "evaluated_at": 1791848177,
+        "evaluated_at": 1792373454,
         "grant_id": "grant-3",
         "index": 0,
         "milestone_id": "ms-3",
@@ -248,8 +248,8 @@
         "verdict": "PARTIAL_PASS"
       },
       "transactions": {
-        "create": "0x5b77d1a11367af2aecf4c40f95a5f072ef9dc90ca60d428af78fe9223cfb8fce",
-        "claim": "0xbe018f6ea2faa490ecaf590c97474fa36db0472c5baf247c0da096b9eeb0f415"
+        "create": "0xeb73078d7ed071736fb695a4f540ef4e88575e4d02cc3bc93b40c7c17e643d5a",
+        "claim": "0x7fc7bc9b78914a27c6f5da971a0d6ba2c28dd0517c5137973557a0dade44f850"
       },
       "agreeingValidators": 3
     }
