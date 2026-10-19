@@ -1,6 +1,8 @@
 # ProofGrant verification guide
 
-This document describes the checks completed for the deployed ProofGrant release and how to reproduce them. The public deployment and E2E target is exclusively GenLayer StudioNet chain `61999`.
+This document describes the historical ProofGrant release and the consensus-binding remediation now in the repository. The public deployment and E2E target is exclusively GenLayer StudioNet chain `61999`.
+
+The listed deployed address is not the remediated source: GenLayer contracts are immutable. A new deployment and complete E2E run are required before describing this fix as live.
 
 ## Verified release
 
@@ -9,7 +11,7 @@ This document describes the checks completed for the deployed ProofGrant release
 - Deployment execution: `FINALIZED / SUCCESS / MAJORITY_AGREE`
 - Source SHA-256: `6aa4d2741d8e0e9f5df5c1b6b5c71187fa572cba1f965f69fcb6b1d67ec13bd5`
 - StudioNet schema: constructor plus 21 public methods
-- Local verification: 17 tests passed; all 3 GenVM lint checks passed
+- Historical local verification: 17 tests passed; all 3 GenVM lint checks passed
 - Live verification: 3 of 3 funded E2E scenarios passed on chain `61999`
 
 ## Local verification layers
@@ -22,10 +24,27 @@ python3 -m pytest -q
 genvm-lint contracts/proof_grant.py
 ```
 
-The 17-test suite contains:
+The current 18-test suite contains:
 
 - Static checks for the `ProofGrant` identity, complete escrow API, deterministic clock usage, separation of consensus from payout calculation, and guarded value transfers.
 - Direct-mode execution for grant creation, exact funding, access control, successful and failed claims, weighted partial results, challenge binding and resolution, release guards, and failed-milestone refunds.
+- A consensus-binding regression check that requires validators to compare every leader-derived field used by verdict, payout, challenge, slash, refund, or bounty logic.
+
+## Consensus-binding remediation
+
+The remediated source SHA-256 is
+`36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`.
+
+The milestone validator now compares, for every criterion, its identity,
+pass/fail value, and reachability; it also compares `any_unreachable`. These
+are exactly the nondeterministic inputs consumed by verdict selection and
+weighted payout calculation.
+
+The challenge validator now reuses that full comparison for the base re-check,
+then compares the exact disputed criterion ID along with evidence reachability,
+anchor binding, and failure corroboration. Settlement repeats the evidence
+identity/reachability/anchor guard before deciding whether to uphold a
+challenge and pay a bond return plus bounty.
 
 The GenVM linter performs three contract checks. The deployed source must retain both the `# v0.2.16` version line and the blank line that terminates the runner JSON header. Without that separator, StudioNet parses subsequent descriptive comments as runner configuration and rejects the contract.
 

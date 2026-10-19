@@ -781,38 +781,7 @@ class ProofGrant(gl.Contract):
             if not isinstance(validator_data, dict) or "criteria" not in validator_data:
                 return False
 
-            leader_criteria = leader_data["criteria"]
-            validator_criteria = validator_data["criteria"]
-            if len(leader_criteria) != len(validator_criteria):
-                return False
-
-            for i in range(len(leader_criteria)):
-                l_entry = leader_criteria[i]
-                v_entry = validator_criteria[i]
-                if l_entry.get("criterion_id") != v_entry.get("criterion_id"):
-                    return False
-                # Core decision field must match exactly — this is the
-                # substantive boolean outcome, not a format check.
-                if bool(l_entry.get("passed")) != bool(v_entry.get("passed")):
-                    return False
-                # Numeric tolerance for fields that legitimately drift between
-                # two independent HTTP calls a few seconds apart (e.g. latency
-                # reported by an HTTP_ENDPOINT check). Tolerance is only
-                # applied to whitelisted numeric detail fields, never to the
-                # `passed` boolean itself.
-                l_latency = l_entry.get("latency_ms")
-                v_latency = v_entry.get("latency_ms")
-                if isinstance(l_latency, (int, float)) and isinstance(v_latency, (int, float)):
-                    if l_latency > 0 and v_latency > 0:
-                        ratio = float(l_latency) / float(v_latency) if v_latency else 0
-                        # allow up to +/-40% latency drift without disputing
-                        # the underlying pass/fail decision
-                        if ratio > 1.4 or ratio < 0.6:
-                            # latency drift alone never flips consensus; only
-                            # the `passed` field (already compared above) does
-                            pass
-
-            return True
+            return self._milestone_consensus_fields_match(leader_data, validator_data)
 
         result = gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
         self._apply_evaluation_result(milestone_id, result)
@@ -826,6 +795,50 @@ class ProofGrant(gl.Contract):
                 any_unreachable = True
             entries.append(entry)
         return {"criteria": entries, "any_unreachable": any_unreachable}
+
+    def _milestone_consensus_fields_match(self, leader_data: dict, validator_data: dict) -> bool:
+        """Compare every nondeterministic field consumed by verdict or payout.
+
+        ``_apply_evaluation_result`` consumes criterion identity and ``passed``
+        to calculate the weighted payout, and consumes ``any_unreachable`` to
+        force an INCONCLUSIVE verdict. A validator must independently derive
+        and compare all three; accepting a leader's reachability aggregate
+        without comparison would let it change an economic outcome.
+
+        ``detail`` and ``latency_ms`` are diagnostic-only. They are deliberately
+        not consensus fields because separate web requests can legitimately
+        produce different diagnostics without changing an economic decision.
+        """
+        leader_criteria = leader_data.get("criteria", [])
+        validator_criteria = validator_data.get("criteria", [])
+        if not isinstance(leader_criteria, list) or not isinstance(validator_criteria, list):
+            return False
+        if len(leader_criteria) != len(validator_criteria):
+            return False
+
+        for i in range(len(leader_criteria)):
+            l_entry = leader_criteria[i]
+            v_entry = validator_criteria[i]
+            if not isinstance(l_entry, dict) or not isinstance(v_entry, dict):
+                return False
+            for field in ("criterion_id", "passed", "unreachable"):
+                if field not in l_entry or field not in v_entry:
+                    return False
+            # Identity binds each boolean to the pinned weighted criterion.
+            if l_entry.get("criterion_id") != v_entry.get("criterion_id"):
+                return False
+            # ``passed`` is consumed by verdict selection and payout math.
+            if bool(l_entry.get("passed")) != bool(v_entry.get("passed")):
+                return False
+            # Per-criterion reachability is aggregated below and also reused
+            # by challenge settlement; it must not be leader-controlled.
+            if bool(l_entry.get("unreachable")) != bool(v_entry.get("unreachable")):
+                return False
+
+        # ``any_unreachable`` directly selects INCONCLUSIVE / zero payout.
+        if "any_unreachable" not in leader_data or "any_unreachable" not in validator_data:
+            return False
+        return bool(leader_data.get("any_unreachable")) == bool(validator_data.get("any_unreachable"))
 
     def _inspect_one_criterion(self, criterion) -> dict:
         try:
@@ -1245,23 +1258,50 @@ class ProofGrant(gl.Contract):
             validator_data = leader_fn()
             if not isinstance(leader_data, dict) or not isinstance(validator_data, dict):
                 return False
-            l_base = leader_data.get("base", {}).get("criteria", [])
-            v_base = validator_data.get("base", {}).get("criteria", [])
-            if len(l_base) != len(v_base):
-                return False
-            for i in range(len(l_base)):
-                if bool(l_base[i].get("passed")) != bool(v_base[i].get("passed")):
-                    return False
-            l_ev = leader_data.get("evidence", {})
-            v_ev = validator_data.get("evidence", {})
-            return (
-                bool(l_ev.get("reachable")) == bool(v_ev.get("reachable"))
-                and bool(l_ev.get("anchor_referenced")) == bool(v_ev.get("anchor_referenced"))
-                and bool(l_ev.get("corroborates_failure")) == bool(v_ev.get("corroborates_failure"))
-            )
+            return self._challenge_consensus_fields_match(leader_data, validator_data, challenge.criterion_id)
 
         result = gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
         return self._settle_challenge(challenge_id, result)
+
+    def _challenge_consensus_fields_match(
+        self, leader_data: dict, validator_data: dict, disputed_criterion_id: str
+    ) -> bool:
+        """Compare every nondeterministic input used by challenge settlement.
+
+        ``_settle_challenge`` decides whether to pay a challenger bond/bounty
+        from: the rechecked criterion IDs, passed values and reachability;
+        the aggregate reachability flag; and the bound-evidence identity,
+        reachability, anchor binding and corroboration values. Consequently a
+        validator independently recomputes and compares each of those fields.
+        """
+        leader_base = leader_data.get("base")
+        validator_base = validator_data.get("base")
+        if not isinstance(leader_base, dict) or not isinstance(validator_base, dict):
+            return False
+        if not self._milestone_consensus_fields_match(leader_base, validator_base):
+            return False
+
+        leader_evidence = leader_data.get("evidence")
+        validator_evidence = validator_data.get("evidence")
+        if not isinstance(leader_evidence, dict) or not isinstance(validator_evidence, dict):
+            return False
+
+        # Bind additive evidence to the exact challenge target. Without this
+        # comparison, a leader could present evidence calculated for a
+        # different criterion and still influence the bounty decision.
+        if leader_evidence.get("criterion_id") != disputed_criterion_id:
+            return False
+        if validator_evidence.get("criterion_id") != disputed_criterion_id:
+            return False
+
+        for field in ("criterion_id", "reachable", "anchor_referenced", "corroborates_failure"):
+            if field not in leader_evidence or field not in validator_evidence:
+                return False
+        for field in ("reachable", "anchor_referenced", "corroborates_failure"):
+            if bool(leader_evidence.get(field)) != bool(validator_evidence.get(field)):
+                return False
+
+        return True
 
     def _get_criterion_anchor(self, criterion) -> str:
         """The identifying string that ties a piece of evidence to THIS
@@ -1281,7 +1321,12 @@ class ProofGrant(gl.Contract):
         try:
             response = gl.nondet.web.get(evidence_url)
         except Exception:
-            return {"reachable": False, "anchor_referenced": False, "corroborates_failure": False}
+            return {
+                "criterion_id": criterion.criterion_id,
+                "reachable": False,
+                "anchor_referenced": False,
+                "corroborates_failure": False,
+            }
         status = int(getattr(response, "status_code", getattr(response, "status", 0)))
         body_bytes = getattr(response, "body", b"")
         try:
@@ -1307,7 +1352,12 @@ class ProofGrant(gl.Contract):
         lowered = body_text.lower()
         failure_markers = ("down", "unreachable", "timeout", "error", "outage", "failed", "offline")
         corroborates = reachable and anchor_referenced and any(marker in lowered for marker in failure_markers)
-        return {"reachable": reachable, "anchor_referenced": anchor_referenced, "corroborates_failure": corroborates}
+        return {
+            "criterion_id": criterion.criterion_id,
+            "reachable": reachable,
+            "anchor_referenced": anchor_referenced,
+            "corroborates_failure": corroborates,
+        }
 
     def _find_result_for_criterion(self, milestone: Milestone, criterion_id: str):
         for result_id in milestone.result_ids:
@@ -1323,7 +1373,18 @@ class ProofGrant(gl.Contract):
         base = result.get("base", {})
         evidence = result.get("evidence", {})
         base_criteria = base.get("criteria", [])
-        evidence_corroborates = bool(evidence.get("corroborates_failure", False))
+        # A corroboration flag is economically meaningful only when it was
+        # produced for this exact disputed criterion and from reachable,
+        # bound evidence. The validator comparison above binds all fields;
+        # repeating the conjunctive guard here keeps settlement safe even if a
+        # malformed result is somehow delivered to this deterministic step.
+        evidence_targets_disputed_criterion = evidence.get("criterion_id") == challenge.criterion_id
+        evidence_corroborates = (
+            evidence_targets_disputed_criterion
+            and bool(evidence.get("reachable", False))
+            and bool(evidence.get("anchor_referenced", False))
+            and bool(evidence.get("corroborates_failure", False))
+        )
 
         # Find the disputed criterion's ORIGINAL result (recorded at claim
         # evaluation time) and its result on THIS re-check.

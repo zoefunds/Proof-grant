@@ -2,7 +2,7 @@
   "network": "GenLayer StudioNet",
   "chain_id": 61999,
   "deployed_at": "2026-10-13",
-  "status": "DEPLOYED_AND_E2E_PASSED",
+  "status": "HISTORICAL_DEPLOYMENT_PRE_REMEDIATION",
   "contract_name": "ProofGrant",
   "contract_address": "0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46",
   "deployer": "0x1c2e587043568239B2fcaeC5f96F278EB134b7f5",
@@ -10,6 +10,8 @@
   "consensus_result": "MAJORITY_AGREE",
   "execution_result": "SUCCESS",
   "source_sha256": "6aa4d2741d8e0e9f5df5c1b6b5c71187fa572cba1f965f69fcb6b1d67ec13bd5",
+  "superseded_by_source_sha256": "36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797",
+  "supersession_reason": "Consensus-binding remediation: every validator must recompute and compare all nondeterministic fields consumed by verdict, payout, challenge, refund, slash, and bounty settlement.",
   "runner": {
     "genvm_version": "v0.2.16",
     "dependency": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6"

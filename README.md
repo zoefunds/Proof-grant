@@ -2,7 +2,19 @@
 
 ProofGrant is a standalone GenLayer Intelligent Contract for evidence-verified grant escrow. A funder deposits each grant's complete milestone budget when the grant is created. Validators independently inspect immutable public evidence, while deterministic contract logic calculates the payout recommendation and enforces the challenge window.
 
-## Live deployment
+## Release status
+
+The StudioNet deployment below is a historical, successfully tested release.
+It predates the consensus-binding remediation in the current source and must
+not be treated as the corrected release. GenLayer contracts are immutable: a
+new StudioNet deployment and E2E run are required before the remediated source
+can be called live.
+
+The current source SHA-256 is `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`.
+It adds complete validator bindings for every nondeterministic field used by
+milestone verdict/payout and challenge bond/bounty settlement.
+
+### Historical deployment
 
 | Field | Value |
 | --- | --- |
@@ -13,12 +25,26 @@ ProofGrant is a standalone GenLayer Intelligent Contract for evidence-verified g
 | Deployment transaction | `0x1aa284d305207b7f8c0b0136c2449653723ff9d077387a9490031bc7ca001d62` |
 | Deployment result | `FINALIZED / SUCCESS / MAJORITY_AGREE` |
 | Deployer | `0x1c2e587043568239B2fcaeC5f96F278EB134b7f5` |
-| Deployed source SHA-256 | `6aa4d2741d8e0e9f5df5c1b6b5c71187fa572cba1f965f69fcb6b1d67ec13bd5` |
+| Deployed source SHA-256 | `6aa4d2741d8e0e9f5df5c1b6b5c71187fa572cba1f965f69fcb6b1d67ec13bd5` (pre-remediation) |
 | GenVM runner | `v0.2.16` |
 | Python dependency | `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6` |
 | Constructor values | bond `2500000000000000000000` wei; frivolous slash `10000` bps; upheld bounty `2000` bps |
 
-The authoritative deployment record is [`proof/deployment.json`](proof/deployment.json). The complete E2E results, including stored contract state and transaction hashes, are in [`proof/live_e2e.json`](proof/live_e2e.json).
+The authoritative historical record is [`proof/deployment.json`](proof/deployment.json). The complete historical E2E results, including stored contract state and transaction hashes, are in [`proof/live_e2e.json`](proof/live_e2e.json).
+
+## Consensus-binding remediation
+
+The current source is designed so a validator independently recomputes and
+compares every nondeterministic field that can affect an economic result:
+
+| Decision | Bound fields |
+| --- | --- |
+| Milestone verdict and payout | per-criterion `criterion_id`, `passed`, `unreachable`, plus aggregate `any_unreachable` |
+| Challenge re-check | the same complete base-criterion fields, including reachability |
+| Challenge settlement and bounty | disputed `criterion_id`, evidence `reachable`, `anchor_referenced`, and `corroborates_failure` |
+
+Diagnostic text and latency are intentionally excluded because the contract
+never uses them to choose a verdict, payout, refund, slash, or bounty.
 
 ## Verified StudioNet E2E results
 
@@ -65,8 +91,8 @@ python3 -m pytest -q
 genvm-lint contracts/proof_grant.py
 ```
 
-Expected result for this release: `17 passed` and `Lint passed (3 checks)`.
+Expected result for the remediation: `18 passed` and `Lint passed (3 checks)`.
 
-To inspect the already-deployed contract, use StudioNet chain `61999` and address `0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46`. Deployment creates a new immutable address, so do not run `npm run deploy:studionet` unless a new release is intentionally required.
+To inspect the historical deployment, use StudioNet chain `61999` and address `0xC28F6ad60bb686F900700c8d3eB7845dfAe0ec46`. Deploying the remediated source will create a new immutable address.
 
 See [`docs/TESTING.md`](docs/TESTING.md) for exact live-test prerequisites and safety notes.

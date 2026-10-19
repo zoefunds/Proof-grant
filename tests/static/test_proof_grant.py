@@ -59,6 +59,35 @@ def test_consensus_and_payout_are_separated():
     assert all("web" not in ast.unparse(call) for call in calls)
 
 
+def test_validators_bind_all_nondeterministic_economic_decision_fields():
+    """No leader-only field may influence a verdict, payout, or challenge bounty."""
+    contract = _contract()
+    methods = {
+        node.name: node
+        for node in contract.body
+        if isinstance(node, ast.FunctionDef)
+    }
+
+    milestone_matcher = ast.unparse(methods["_milestone_consensus_fields_match"])
+    # Used by `_apply_evaluation_result`: criterion ID identifies its weight,
+    # passed selects the weight, and any_unreachable forces INCONCLUSIVE.
+    for field in ("criterion_id", "passed", "unreachable", "any_unreachable"):
+        assert field in milestone_matcher
+    assert 'field not in l_entry' in milestone_matcher
+    assert "'any_unreachable' not in leader_data" in milestone_matcher
+
+    challenge_matcher = ast.unparse(methods["_challenge_consensus_fields_match"])
+    # Used by `_settle_challenge`: target identity and all evidence fields
+    # decide whether the bond is returned and whether a bounty is paid.
+    for field in ("criterion_id", "reachable", "anchor_referenced", "corroborates_failure"):
+        assert field in challenge_matcher
+    assert "disputed_criterion_id" in challenge_matcher
+
+    settlement = ast.unparse(methods["_settle_challenge"])
+    for guard in ("evidence_targets_disputed_criterion", "anchor_referenced", "reachable"):
+        assert guard in settlement
+
+
 def test_value_transfers_use_single_guarded_helper():
     source = SOURCE.read_text()
     assert source.count("emit_transfer(") == 1
