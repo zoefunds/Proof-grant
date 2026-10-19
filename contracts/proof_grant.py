@@ -816,6 +816,8 @@ class ProofGrant(gl.Contract):
         if len(leader_criteria) != len(validator_criteria):
             return False
 
+        leader_has_unreachable = False
+        validator_has_unreachable = False
         for i in range(len(leader_criteria)):
             l_entry = leader_criteria[i]
             v_entry = validator_criteria[i]
@@ -834,9 +836,20 @@ class ProofGrant(gl.Contract):
             # by challenge settlement; it must not be leader-controlled.
             if bool(l_entry.get("unreachable")) != bool(v_entry.get("unreachable")):
                 return False
+            if bool(l_entry.get("unreachable")):
+                leader_has_unreachable = True
+            if bool(v_entry.get("unreachable")):
+                validator_has_unreachable = True
 
         # ``any_unreachable`` directly selects INCONCLUSIVE / zero payout.
         if "any_unreachable" not in leader_data or "any_unreachable" not in validator_data:
+            return False
+        # Bind the aggregate to the independently returned per-criterion
+        # reachability values too. This rejects a malformed result even when
+        # both leader and validator carry the same incorrect aggregate.
+        if bool(leader_data.get("any_unreachable")) != leader_has_unreachable:
+            return False
+        if bool(validator_data.get("any_unreachable")) != validator_has_unreachable:
             return False
         return bool(leader_data.get("any_unreachable")) == bool(validator_data.get("any_unreachable"))
 

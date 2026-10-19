@@ -5,18 +5,18 @@ ProofGrant is a standalone GenLayer Intelligent Contract for evidence-verified g
 ## Release status
 
 The remediated source is deployed and E2E-verified on StudioNet. Its SHA-256
-is `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`.
+is `aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8`.
 
 | Field | Value |
 | --- | --- |
 | Network | GenLayer StudioNet |
 | Chain ID | `61999` |
-| Contract | `0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70` |
+| Contract | `0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8` |
 | Contract class | `ProofGrant` |
-| Deployment transaction | `0xbff527f5ceed5ab1b61b50b95fe5f7d2542bf27208ebe67e33d07c8724e95e2e` |
+| Deployment transaction | `0xa145c50817721bc8a7ff3c9c48186880efb502304fd1175f1ceb62c0e09c87ca` |
 | Deployment result | `FINALIZED / SUCCESS / MAJORITY_AGREE` |
 | Deployer | `0x1c2e587043568239B2fcaeC5f96F278EB134b7f5` |
-| Deployed source SHA-256 | `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797` |
+| Deployed source SHA-256 | `aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8` |
 | GenVM runner | `v0.2.16` |
 | Python dependency | `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6` |
 | Constructor values | bond `2500000000000000000000` wei; frivolous slash `10000` bps; upheld bounty `2000` bps |
@@ -82,8 +82,8 @@ python3 -m pytest -q
 genvm-lint contracts/proof_grant.py
 ```
 
-Expected result for the remediation: `18 passed` and `Lint passed (3 checks)`.
+Expected result for the remediation: `20 passed` and `Lint passed (3 checks)`.
 
-To inspect the deployed release, use StudioNet chain `61999` and address `0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70`.
+To inspect the deployed release, use StudioNet chain `61999` and address `0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8`.
 
 See [`docs/TESTING.md`](docs/TESTING.md) for exact live-test prerequisites and safety notes.

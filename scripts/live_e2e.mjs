@@ -1,53 +1,52 @@
 import fs from "node:fs";
-import keytar from "keytar";
-import { createAccount, createClient, chains } from "genlayer-js";
-import { ExecutionResult, TransactionStatus } from "genlayer-js/types";
+import { execFileSync } from "node:child_process";
 
 const contract = process.env.PROOF_GRANT_CONTRACT;
 if (!contract) throw new Error("PROOF_GRANT_CONTRACT is required");
 
-const loadAccount = async (name) => {
-  const key = await keytar.getPassword("genlayer-cli", `account:${name}`);
-  if (!key) throw new Error(`${name} is not unlocked in the GenLayer CLI keychain`);
-  return createAccount(key);
-};
-
-const funder = await loadAccount(process.env.FUNDER_ACCOUNT ?? "cw-lender-e2e");
-const grantee = await loadAccount(process.env.GRANTEE_ACCOUNT ?? "cw-borrower-e2e");
-const chain = chains.studionet;
-const funderClient = createClient({ chain, account: funder });
-const granteeClient = createClient({ chain, account: grantee });
+const funder = { address: "0x1c2e587043568239B2fcaeC5f96F278EB134b7f5" };
+const grantee = { address: "0x034d85C75b3902892C2F1D5887744Ab65d333176" };
+const funderClient = null;
+const granteeClient = null;
 const results = [];
 const repository = "https://github.com/genlayerlabs/genlayer-js";
 const repositoryRef = "main";
 const evidenceDate = new Date().toISOString().slice(0, 10);
 const absentPath = `proofgrant-live-evidence/absent-file-${evidenceDate}.txt`;
 
-const read = (client, functionName, args = []) => client.readContract({
-  address: contract,
-  functionName,
-  args,
-  stateStatus: "finalized",
-});
+const read = (_client, functionName, args = []) => JSON.parse(execFileSync(
+  "node",
+  ["scripts/read_studionet_contract.mjs", contract, functionName, JSON.stringify(args)],
+  { encoding: "utf8" },
+));
 
-const write = async (client, functionName, args = [], value = 0n) => {
-  const hash = await client.writeContract({ address: contract, functionName, args, value });
+const write = (accountName, functionName, args = [], value = 0n) => {
+  // genlayer-js can terminate the current Node process after submitting a
+  // transaction. Isolating submission keeps this runner alive to obtain a
+  // finalized receipt and prevents incomplete E2E evidence.
+  const hash = execFileSync(
+    "node",
+    [
+      "scripts/submit_studionet_write.mjs",
+      accountName,
+      contract,
+      functionName,
+      value.toString(),
+      ...args,
+    ],
+    { encoding: "utf8" },
+  ).trim();
   console.log(JSON.stringify({ event: "submitted", functionName, hash }));
-  const receipt = await client.waitForTransactionReceipt({
-    hash,
-    status: TransactionStatus.FINALIZED,
-    retries: 300,
-    interval: 3000,
-  });
-  const execution = receipt.txExecutionResultName ?? receipt.executionResultName;
-  const executionNumber = receipt.txExecutionResult ?? receipt.executionResult;
-  const leaders = receipt.consensusData?.leaderReceipt ?? receipt.consensus_data?.leader_receipt ?? [];
-  const leaderExecution = leaders[0]?.executionResult ?? leaders[0]?.execution_result;
-  const succeeded = execution === "FINISHED_WITH_RETURN" ||
-    executionNumber === ExecutionResult.FINISHED_WITH_RETURN || leaderExecution === "SUCCESS";
-  if (!succeeded) throw new Error(`${functionName} failed: tx=${hash} execution=${execution ?? executionNumber ?? leaderExecution}`);
-  const votes = receipt.consensusData?.votes ?? receipt.consensus_data?.votes ?? {};
-  const agreeingValidators = Object.values(votes).filter((vote) => String(vote).toLowerCase() === "agree").length;
+  const receiptText = execFileSync(
+    "npx",
+    ["genlayer", "receipt", hash, "--retries", "300", "--interval", "3000"],
+    { encoding: "utf8" },
+  );
+  if (!receiptText.includes("status_name: 'FINALIZED'") || !receiptText.includes("execution_result: 'SUCCESS'")) {
+    throw new Error(`${functionName} did not finalize successfully: tx=${hash}`);
+  }
+  const votesBlock = receiptText.match(/votes:\s*\{([\s\S]*?)\n\s*\},\n\s*leader_receipt:/)?.[1] ?? "";
+  const agreeingValidators = (votesBlock.match(/:\s*'agree'/g) ?? []).length;
   return { hash, agreeingValidators };
 };
 
@@ -69,7 +68,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
     criteria,
   }];
   const before = await read(funderClient, "list_grants");
-  const create = await write(funderClient, "create_grant", [grantee.address, title, JSON.stringify(spec)], rewardWei);
+  const create = write(process.env.FUNDER_ACCOUNT ?? "cw-lender-e2e", "create_grant", [grantee.address, title, JSON.stringify(spec)], rewardWei);
   const after = await read(funderClient, "list_grants");
   if (after.length !== before.length + 1) throw new Error(`${title}: grant registry did not grow by one`);
   const grantId = after[after.length - 1];
@@ -89,7 +88,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
       weightBps: 10000,
     })],
   });
-  const claim = await write(granteeClient, "submit_milestone_claim", [opened.milestoneId, `Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on ${evidenceDate}.`]);
+  const claim = write(process.env.GRANTEE_ACCOUNT ?? "cw-borrower-e2e", "submit_milestone_claim", [opened.milestoneId, `Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on ${evidenceDate}.`]);
   const milestone = await read(funderClient, "get_milestone", [opened.milestoneId]);
   if (milestone.verdict !== "PASSED" || milestone.status !== "CHALLENGE_WINDOW") {
     throw new Error(`scenario 1 expected PASSED/CHALLENGE_WINDOW: ${JSON.stringify(milestone)}`);
@@ -124,12 +123,12 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
       weightBps: 10000,
     })],
   });
-  const claim = await write(granteeClient, "submit_milestone_claim", [opened.milestoneId, `Negative-control verification: validators must independently confirm that ${absentPath} is absent from the real public repository.`]);
+  const claim = write(process.env.GRANTEE_ACCOUNT ?? "cw-borrower-e2e", "submit_milestone_claim", [opened.milestoneId, `Negative-control verification: validators must independently confirm that ${absentPath} is absent from the real public repository.`]);
   const failed = await read(funderClient, "get_milestone", [opened.milestoneId]);
   if (failed.verdict !== "FAILED" || failed.status !== "FAILED") {
     throw new Error(`scenario 2 expected FAILED: ${JSON.stringify(failed)}`);
   }
-  const refund = await write(funderClient, "claim_failed_milestone_refund", [opened.milestoneId]);
+  const refund = write(process.env.FUNDER_ACCOUNT ?? "cw-lender-e2e", "claim_failed_milestone_refund", [opened.milestoneId]);
   const refunded = await read(funderClient, "get_milestone", [opened.milestoneId]);
   if (refunded.reward_deposited !== "0") throw new Error(`scenario 2 refund ledger not zero: ${JSON.stringify(refunded)}`);
   const criterion = await read(funderClient, "get_criterion", [failed.criteria_ids[0]]);
@@ -169,7 +168,7 @@ const createGrant = async ({ title, rewardWei, criteria }) => {
       }),
     ],
   });
-  const claim = await write(granteeClient, "submit_milestone_claim", [opened.milestoneId, "Weighted live audit of two immutable criteria against the same public main-branch snapshot: README presence and the explicit negative-control artifact path."]);
+  const claim = write(process.env.GRANTEE_ACCOUNT ?? "cw-borrower-e2e", "submit_milestone_claim", [opened.milestoneId, "Weighted live audit of two immutable criteria against the same public main-branch snapshot: README presence and the explicit negative-control artifact path."]);
   const milestone = await read(funderClient, "get_milestone", [opened.milestoneId]);
   if (milestone.verdict !== "PARTIAL_PASS" || milestone.status !== "CHALLENGE_WINDOW" || Number(milestone.recommended_payout_bps) !== 5000) {
     throw new Error(`scenario 3 expected PARTIAL_PASS/5000 bps: ${JSON.stringify(milestone)}`);

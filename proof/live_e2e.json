@@ -1,27 +1,27 @@
 {
   "ok": true,
-  "testedAt": "2026-10-19T01:31:40.533Z",
+  "testedAt": "2026-10-19T01:44:47.889Z",
   "network": "GenLayer StudioNet",
   "chainId": 61999,
-  "contract": "0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70",
+  "contract": "0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8",
   "funder": "0x1c2e587043568239B2fcaeC5f96F278EB134b7f5",
   "grantee": "0x034d85C75b3902892C2F1D5887744Ab65d333176",
   "repositoryEvidence": {
     "repository": "https://github.com/genlayerlabs/genlayer-js",
     "ref": "main",
-    "negativeControlPath": "proofgrant-live-evidence/absent-file-2026-10-13.txt"
+    "negativeControlPath": "proofgrant-live-evidence/absent-file-2026-10-19.txt"
   },
   "scenarios": [
     {
       "scenario": 1,
-      "title": "GenLayer JS package-manifest verification grant — 2026-10-13",
+      "title": "GenLayer JS package-manifest verification grant — 2026-10-19",
       "expectedOutcome": "PASSED",
-      "grantId": "grant-1",
-      "milestoneId": "ms-1",
+      "grantId": "grant-4",
+      "milestoneId": "ms-4",
       "repository": "https://github.com/genlayerlabs/genlayer-js",
       "repositoryRef": "main",
       "criterion": {
-        "criterion_id": "crit-1",
+        "criterion_id": "crit-4",
         "criterion_type": "GIT_REPO_STATE",
         "description": "The genlayerlabs/genlayer-js main branch resolves to a live commit and contains package.json at the repository root",
         "expected_body_contains": "",
@@ -38,54 +38,54 @@
         "weight_bps": 10000
       },
       "criterionResult": {
-        "criterion_id": "crit-1",
+        "criterion_id": "crit-4",
         "detail": "ref_exists=True path_ok=True",
         "passed": true
       },
       "finalMilestone": {
         "active_challenge_id": "",
-        "challenge_window_closes_at": 1792459637,
-        "challenge_window_opens_at": 1792373237,
+        "challenge_window_closes_at": 1792460434,
+        "challenge_window_opens_at": 1792374034,
         "challenge_window_seconds": 86400,
-        "claim_note": "Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on 2026-10-13.",
-        "claim_submitted_at": 1792373237,
+        "claim_note": "Live verification of the public genlayerlabs/genlayer-js main branch and its root package manifest on 2026-10-19.",
+        "claim_submitted_at": 1792374034,
         "claimable_after": 0,
-        "claimed_artifact_hash": "87b18508494e200ac4c73c330d59cea281364735ad8422cd62f3f220e6815425",
+        "claimed_artifact_hash": "ba22bb149eb6c3ad5fd1404d0fa79a226a50a74df31928bd1c0f0c8cba524e89",
         "criteria_ids": [
-          "crit-1"
+          "crit-4"
         ],
-        "evaluated_at": 1792373237,
-        "grant_id": "grant-1",
+        "evaluated_at": 1792374034,
+        "grant_id": "grant-4",
         "index": 0,
-        "milestone_id": "ms-1",
+        "milestone_id": "ms-4",
         "recommended_payout_bps": 10000,
         "result_ids": [
-          "res-1"
+          "res-3"
         ],
         "reward_deposited": "1000000",
         "reward_wei": "1000000",
         "status": "CHALLENGE_WINDOW",
-        "title": "GenLayer JS package-manifest verification grant — 2026-10-13 — repository evidence checkpoint",
+        "title": "GenLayer JS package-manifest verification grant — 2026-10-19 — repository evidence checkpoint",
         "verdict": "PASSED"
       },
       "transactions": {
-        "create": "0x333c2050f6f3880e6044551835d9be7492e0875a814bc58db698dbcedcb35dc4",
-        "claim": "0xf5f8f6a0d5e68f483ed2373927334d42188e342e46939940c0fdbd37241d66c3"
+        "create": "0x7ad71a0650406429973f460874df9fb3bfb74189f1e0b3f0b9ea1f21418c6a7f",
+        "claim": "0x0863ef2fe5954dd5142bc634481ea13772ab9f851f19689a1017f1dc436bcb31"
       },
       "agreeingValidators": 3
     },
     {
       "scenario": 2,
-      "title": "GenLayer JS absent-artifact control grant — 2026-10-13",
+      "title": "GenLayer JS absent-artifact control grant — 2026-10-19",
       "expectedOutcome": "FAILED then fully refunded",
-      "grantId": "grant-2",
-      "milestoneId": "ms-2",
+      "grantId": "grant-6",
+      "milestoneId": "ms-6",
       "repository": "https://github.com/genlayerlabs/genlayer-js",
       "repositoryRef": "main",
       "criterion": {
-        "criterion_id": "crit-2",
+        "criterion_id": "crit-6",
         "criterion_type": "GIT_REPO_STATE",
-        "description": "The genlayerlabs/genlayer-js main branch must contain the audit artifact at proofgrant-live-evidence/absent-file-2026-10-13.txt",
+        "description": "The genlayerlabs/genlayer-js main branch must contain the audit artifact at proofgrant-live-evidence/absent-file-2026-10-19.txt",
         "expected_body_contains": "",
         "expected_status_max": 0,
         "expected_status_min": 0,
@@ -93,14 +93,14 @@
         "onchain_event_topic0": "",
         "onchain_min_block": 0,
         "onchain_rpc_url": "",
-        "repo_path_expected": "proofgrant-live-evidence/absent-file-2026-10-13.txt",
+        "repo_path_expected": "proofgrant-live-evidence/absent-file-2026-10-19.txt",
         "repo_ref": "main",
         "repo_url": "https://github.com/genlayerlabs/genlayer-js",
         "target_url": "",
         "weight_bps": 10000
       },
       "criterionResult": {
-        "criterion_id": "crit-2",
+        "criterion_id": "crit-6",
         "detail": "ref_exists=True path_ok=False",
         "passed": false
       },
@@ -109,25 +109,25 @@
         "challenge_window_closes_at": 0,
         "challenge_window_opens_at": 0,
         "challenge_window_seconds": 86400,
-        "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-13.txt is absent from the real public repository.",
-        "claim_submitted_at": 1792373326,
+        "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-19.txt is absent from the real public repository.",
+        "claim_submitted_at": 1792374122,
         "claimable_after": 0,
-        "claimed_artifact_hash": "5fb039e4aef6926301d0524e2de8f62802bc52a287d081812dcf15172abb0b7b",
+        "claimed_artifact_hash": "4a02f087d497161821539d65b72a779cc2e6d6bd87e8cde5f5767ae47c570df4",
         "criteria_ids": [
-          "crit-2"
+          "crit-6"
         ],
-        "evaluated_at": 1792373326,
-        "grant_id": "grant-2",
+        "evaluated_at": 1792374122,
+        "grant_id": "grant-6",
         "index": 0,
-        "milestone_id": "ms-2",
+        "milestone_id": "ms-6",
         "recommended_payout_bps": 0,
         "result_ids": [
-          "res-2"
+          "res-5"
         ],
         "reward_deposited": "2000000",
         "reward_wei": "2000000",
         "status": "FAILED",
-        "title": "GenLayer JS absent-artifact control grant — 2026-10-13 — repository evidence checkpoint",
+        "title": "GenLayer JS absent-artifact control grant — 2026-10-19 — repository evidence checkpoint",
         "verdict": "FAILED"
       },
       "finalMilestone": {
@@ -135,45 +135,45 @@
         "challenge_window_closes_at": 0,
         "challenge_window_opens_at": 0,
         "challenge_window_seconds": 86400,
-        "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-13.txt is absent from the real public repository.",
-        "claim_submitted_at": 1792373326,
+        "claim_note": "Negative-control verification: validators must independently confirm that proofgrant-live-evidence/absent-file-2026-10-19.txt is absent from the real public repository.",
+        "claim_submitted_at": 1792374122,
         "claimable_after": 0,
-        "claimed_artifact_hash": "5fb039e4aef6926301d0524e2de8f62802bc52a287d081812dcf15172abb0b7b",
+        "claimed_artifact_hash": "4a02f087d497161821539d65b72a779cc2e6d6bd87e8cde5f5767ae47c570df4",
         "criteria_ids": [
-          "crit-2"
+          "crit-6"
         ],
-        "evaluated_at": 1792373326,
-        "grant_id": "grant-2",
+        "evaluated_at": 1792374122,
+        "grant_id": "grant-6",
         "index": 0,
-        "milestone_id": "ms-2",
+        "milestone_id": "ms-6",
         "recommended_payout_bps": 0,
         "result_ids": [
-          "res-2"
+          "res-5"
         ],
         "reward_deposited": "0",
         "reward_wei": "2000000",
         "status": "FAILED",
-        "title": "GenLayer JS absent-artifact control grant — 2026-10-13 — repository evidence checkpoint",
+        "title": "GenLayer JS absent-artifact control grant — 2026-10-19 — repository evidence checkpoint",
         "verdict": "FAILED"
       },
       "transactions": {
-        "create": "0x3b3d94f0697c745dcc0b8d407d7734d79527621de3413780ce4b670fe61b6428",
-        "claim": "0x14946e21b1137577a4b2612a80afa8f2f571a3002c9d13ab71d7700fe06c163b",
-        "refund": "0x245934ab3ce57f63c725de6354def02e7ca291794f6c2fca1f49435715046807"
+        "create": "0x2e651d9d4f3125f615d6e963749b0c1295af88fa83b7db59f59ed9bab13dd48a",
+        "claim": "0xb3657a784dd7a2c0824ca0533d3a7b0edf02bd58e6528ca7edee6a20db78d5ba",
+        "refund": "0xcbe08406d291979176189845cf80c6957a967780647d31838470728b9c541c86"
       },
-      "agreeingValidators": 4
+      "agreeingValidators": 3
     },
     {
       "scenario": 3,
-      "title": "GenLayer JS weighted repository completeness grant — 2026-10-13",
+      "title": "GenLayer JS weighted repository completeness grant — 2026-10-19",
       "expectedOutcome": "PARTIAL_PASS with deterministic 5000 bps recommendation",
-      "grantId": "grant-3",
-      "milestoneId": "ms-3",
+      "grantId": "grant-8",
+      "milestoneId": "ms-8",
       "repository": "https://github.com/genlayerlabs/genlayer-js",
       "repositoryRef": "main",
       "criteria": [
         {
-          "criterion_id": "crit-3",
+          "criterion_id": "crit-9",
           "criterion_type": "GIT_REPO_STATE",
           "description": "The genlayerlabs/genlayer-js main branch resolves and contains the public README.md documentation file",
           "expected_body_contains": "",
@@ -190,9 +190,9 @@
           "weight_bps": 5000
         },
         {
-          "criterion_id": "crit-4",
+          "criterion_id": "crit-10",
           "criterion_type": "GIT_REPO_STATE",
-          "description": "The same main branch contains the additional evidence artifact at proofgrant-live-evidence/absent-file-2026-10-13.txt",
+          "description": "The same main branch contains the additional evidence artifact at proofgrant-live-evidence/absent-file-2026-10-19.txt",
           "expected_body_contains": "",
           "expected_status_max": 0,
           "expected_status_min": 0,
@@ -200,7 +200,7 @@
           "onchain_event_topic0": "",
           "onchain_min_block": 0,
           "onchain_rpc_url": "",
-          "repo_path_expected": "proofgrant-live-evidence/absent-file-2026-10-13.txt",
+          "repo_path_expected": "proofgrant-live-evidence/absent-file-2026-10-19.txt",
           "repo_ref": "main",
           "repo_url": "https://github.com/genlayerlabs/genlayer-js",
           "target_url": "",
@@ -209,47 +209,47 @@
       ],
       "criterionResults": [
         {
-          "criterion_id": "crit-3",
+          "criterion_id": "crit-9",
           "detail": "ref_exists=True path_ok=True",
           "passed": true
         },
         {
-          "criterion_id": "crit-4",
+          "criterion_id": "crit-10",
           "detail": "ref_exists=True path_ok=False",
           "passed": false
         }
       ],
       "finalMilestone": {
         "active_challenge_id": "",
-        "challenge_window_closes_at": 1792459854,
-        "challenge_window_opens_at": 1792373454,
+        "challenge_window_closes_at": 1792460648,
+        "challenge_window_opens_at": 1792374248,
         "challenge_window_seconds": 86400,
         "claim_note": "Weighted live audit of two immutable criteria against the same public main-branch snapshot: README presence and the explicit negative-control artifact path.",
-        "claim_submitted_at": 1792373454,
+        "claim_submitted_at": 1792374248,
         "claimable_after": 0,
-        "claimed_artifact_hash": "136d0e64d17ceb3e555037e754872f99bc22cf34b2b16a35d4e2c134b4f1313c",
+        "claimed_artifact_hash": "8d9c642cd9f48143f01ce1155bb9c5900d644547e75f24d6a71a34e841c6f368",
         "criteria_ids": [
-          "crit-3",
-          "crit-4"
+          "crit-9",
+          "crit-10"
         ],
-        "evaluated_at": 1792373454,
-        "grant_id": "grant-3",
+        "evaluated_at": 1792374248,
+        "grant_id": "grant-8",
         "index": 0,
-        "milestone_id": "ms-3",
+        "milestone_id": "ms-8",
         "recommended_payout_bps": 5000,
         "result_ids": [
-          "res-3",
-          "res-4"
+          "res-8",
+          "res-9"
         ],
         "reward_deposited": "3000000",
         "reward_wei": "3000000",
         "status": "CHALLENGE_WINDOW",
-        "title": "GenLayer JS weighted repository completeness grant — 2026-10-13 — repository evidence checkpoint",
+        "title": "GenLayer JS weighted repository completeness grant — 2026-10-19 — repository evidence checkpoint",
         "verdict": "PARTIAL_PASS"
       },
       "transactions": {
-        "create": "0xeb73078d7ed071736fb695a4f540ef4e88575e4d02cc3bc93b40c7c17e643d5a",
-        "claim": "0x7fc7bc9b78914a27c6f5da971a0d6ba2c28dd0517c5137973557a0dade44f850"
+        "create": "0xacaa8efc2818ddc22a711da93c64855b9fa6ce0c9ccae943dc9f6acd511bfc9a",
+        "claim": "0x6baa76e8ef5ba02ecc598986e5e28d4d684105f16cada1424d25f343291939ab"
       },
       "agreeingValidators": 3
     }

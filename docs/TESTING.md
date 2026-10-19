@@ -4,12 +4,12 @@ This document describes the deployed ProofGrant release and its consensus-bindin
 
 ## Verified release
 
-- Contract: `0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70`
-- Deployment transaction: `0xbff527f5ceed5ab1b61b50b95fe5f7d2542bf27208ebe67e33d07c8724e95e2e`
+- Contract: `0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8`
+- Deployment transaction: `0xa145c50817721bc8a7ff3c9c48186880efb502304fd1175f1ceb62c0e09c87ca`
 - Deployment execution: `FINALIZED / SUCCESS / MAJORITY_AGREE`
-- Source SHA-256: `36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`
+- Source SHA-256: `aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8`
 - StudioNet schema: constructor plus 21 public methods
-- Local verification: 18 tests passed; all 3 GenVM lint checks passed
+- Local verification: 20 tests passed; all 3 GenVM lint checks passed
 - Live verification: 3 of 3 funded E2E scenarios passed on chain `61999`
 
 ## Local verification layers
@@ -22,7 +22,7 @@ python3 -m pytest -q
 genvm-lint contracts/proof_grant.py
 ```
 
-The current 18-test suite contains:
+The current 20-test suite contains:
 
 - Static checks for the `ProofGrant` identity, complete escrow API, deterministic clock usage, separation of consensus from payout calculation, and guarded value transfers.
 - Direct-mode execution for grant creation, exact funding, access control, successful and failed claims, weighted partial results, challenge binding and resolution, release guards, and failed-milestone refunds.
@@ -31,7 +31,7 @@ The current 18-test suite contains:
 ## Consensus-binding remediation
 
 The remediated source SHA-256 is
-`36dd5e184d675decc10095e20b9239741cfd0669581a70c459f0d5d3a849c797`.
+`aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8`.
 
 The milestone validator now compares, for every criterion, its identity,
 pass/fail value, and reachability; it also compares `any_unreachable`. These
@@ -85,7 +85,7 @@ The funder must have enough StudioNet GEN for the three deliberately small depos
 Run only against the intended chain-61999 contract:
 
 ```bash
-PROOF_GRANT_CONTRACT=0xfa080522aC1e7eA7e1632b5547C53a638b8DBf70 npm run test:live
+PROOF_GRANT_CONTRACT=0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8 npm run test:live
 ```
 
 The runner is fixed to `chains.studionet`; the resulting evidence file must state `"network": "GenLayer StudioNet"` and `"chainId": 61999`.
