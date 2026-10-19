@@ -43,9 +43,9 @@ All tests below ran on StudioNet chain `61999` on October 19, 2026. The funder w
 
 | Scenario | Real criterion | Funded reward | Result | Transactions |
 | --- | --- | ---: | --- | --- |
-| Positive repository evidence | Root `package.json` exists | `1,000,000` wei | `PASSED`, 10000 bps, `CHALLENGE_WINDOW` | create `0x333c2050f6f3880e6044551835d9be7492e0875a814bc58db698dbcedcb35dc4`; claim `0xf5f8f6a0d5e68f483ed2373927334d42188e342e46939940c0fdbd37241d66c3` |
-| Negative-control evidence | `proofgrant-live-evidence/absent-file-2026-10-13.txt` does not exist | `2,000,000` wei | `FAILED`, then fully refunded; escrow balance became `0` | create `0x3b3d94f0697c745dcc0b8d407d7734d79527621de3413780ce4b670fe61b6428`; claim `0x14946e21b1137577a4b2612a80afa8f2f571a3002c9d13ab71d7700fe06c163b`; refund `0x245934ab3ce57f63c725de6354def02e7ca291794f6c2fca1f49435715046807` |
-| Weighted mixed evidence | `README.md` exists at 5000 bps; negative-control path does not exist at 5000 bps | `3,000,000` wei | `PARTIAL_PASS`, exactly 5000 bps, `CHALLENGE_WINDOW` | create `0xeb73078d7ed071736fb695a4f540ef4e88575e4d02cc3bc93b40c7c17e643d5a`; claim `0x7fc7bc9b78914a27c6f5da971a0d6ba2c28dd0517c5137973557a0dade44f850` |
+| Positive repository evidence | Root `package.json` exists | `1,000,000` wei | `PASSED`, 10000 bps, `CHALLENGE_WINDOW` | create `0x7ad71a0650406429973f460874df9fb3bfb74189f1e0b3f0b9ea1f21418c6a7f`; claim `0x0863ef2fe5954dd5142bc634481ea13772ab9f851f19689a1017f1dc436bcb31` |
+| Negative-control evidence | `proofgrant-live-evidence/absent-file-2026-10-19.txt` does not exist | `2,000,000` wei | `FAILED`, then fully refunded; escrow balance became `0` | create `0x2e651d9d4f3125f615d6e963749b0c1295af88fa83b7db59f59ed9bab13dd48a`; claim `0xb3657a784dd7a2c0824ca0533d3a7b0edf02bd58e6528ca7edee6a20db78d5ba`; refund `0xcbe08406d291979176189845cf80c6957a967780647d31838470728b9c541c86` |
+| Weighted mixed evidence | `README.md` exists at 5000 bps; negative-control path does not exist at 5000 bps | `3,000,000` wei | `PARTIAL_PASS`, exactly 5000 bps, `CHALLENGE_WINDOW` | create `0xacaa8efc2818ddc22a711da93c64855b9fa6ce0c9ccae943dc9f6acd511bfc9a`; claim `0x6baa76e8ef5ba02ecc598986e5e28d4d684105f16cada1424d25f343291939ab` |
 
 Every claim finalized with validator quorum and three recorded `agree` votes. These are deliberately small test deposits; amounts are wei, not whole GEN.
 
