@@ -23,15 +23,7 @@ def _milestone_payload():
 
 
 def _challenge_payload():
-    return {
-        "base": _milestone_payload(),
-        "evidence": {
-            "criterion_id": "crit-1",
-            "reachable": True,
-            "anchor_referenced": True,
-            "corroborates_failure": True,
-        },
-    }
+    return {"base": _milestone_payload()}
 
 
 def test_milestone_validator_rejects_each_economic_field_mismatch(direct_vm, direct_deploy, direct_alice):
@@ -61,7 +53,7 @@ def test_milestone_validator_rejects_each_economic_field_mismatch(direct_vm, dir
     assert contract._milestone_consensus_fields_match(malformed_leader, malformed_validator) is False
 
 
-def test_challenge_validator_rejects_base_identity_reachability_and_evidence_mismatches(
+def test_challenge_validator_rejects_every_authoritative_base_recheck_mismatch(
     direct_vm, direct_deploy, direct_alice
 ):
     contract = _contract(direct_vm, direct_deploy, direct_alice)
@@ -82,13 +74,5 @@ def test_challenge_validator_rejects_base_identity_reachability_and_evidence_mis
     validator["base"]["any_unreachable"] = True
     assert contract._challenge_consensus_fields_match(leader, validator, "crit-1") is False
 
-    # Evidence fields decide whether the challenger receives a bounty.
-    for field, replacement in (
-        ("criterion_id", "crit-2"),
-        ("reachable", False),
-        ("anchor_referenced", False),
-        ("corroborates_failure", False),
-    ):
-        validator = _challenge_payload()
-        validator["evidence"][field] = replacement
-        assert contract._challenge_consensus_fields_match(leader, validator, "crit-1") is False
+    # A challenge target must exist in the pinned authoritative re-check.
+    assert contract._challenge_consensus_fields_match(leader, _challenge_payload(), "crit-missing") is False

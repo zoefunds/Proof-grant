@@ -2,11 +2,9 @@
 
 1. A challenge must be bound to one specific pinned criterion — you cannot
    dispute "the milestone" in general.
-2. Additive evidence can only corroborate a failure when it verifiably
-   references the SAME criterion's own artifact anchor (its URL/repo/
-   contract address) — a page that merely contains a generic failure
-   keyword, with no connection to the disputed criterion, can never
-   overturn a result.
+2. Challenger-provided URLs are non-economic context. Even a reachable page
+   that echoes the criterion anchor and contains generic failure language
+   can never overturn a still-passing criterion or earn a bounty.
 3. A challenge against one criterion of a PARTIAL_PASS milestone is decided
    on that criterion alone, not by requiring every other (already-failing)
    criterion to newly pass too — the old "full re-pass or uphold" standard
@@ -133,15 +131,13 @@ def test_partial_pass_milestone_unrelated_generic_evidence_does_not_uphold(
     assert milestone["recommended_payout_bps"] == 5000
 
 
-def test_bound_evidence_referencing_the_disputed_criterion_upholds(
+def test_challenger_controlled_anchor_and_failure_words_cannot_uphold(
     direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie
 ):
-    """Same PARTIAL_PASS setup, but this time the evidence page explicitly
-    references criterion A's own target_url AND contains a failure keyword
-    — genuinely bound, verifiable evidence. This should UPHOLD even though
-    criterion A's live re-check still happens to return 200 (the evidence
-    is what independently corroborates a failure during the actual disputed
-    window, e.g. an archival log of downtime that isn't visible right now).
+    """A challenger controls this page, so echoing an anchor and the words
+    "down" / "error" cannot convert it into authoritative evidence. The
+    independently rechecked pinned endpoint still passes, so the challenge
+    must be rejected and no bounty can be paid.
     """
     direct_vm.sender = direct_alice
     contract = direct_deploy("contracts/proof_grant.py", "2500000000000000000000", 10000, 2000)
@@ -166,30 +162,15 @@ def test_bound_evidence_referencing_the_disputed_criterion_upholds(
     direct_vm.sender = direct_charlie
     status = contract.resolve_challenge(challenge_id)
 
-    assert status == "UPHELD"
+    assert status == "REJECTED"
     milestone = contract.get_milestone(milestone_id)
-    assert milestone["status"] == "FAILED"
-    # Settlement correctness, not just the status label: exactly the
-    # upheld_bounty_bps share (20% as configured at deploy) leaves the
-    # reward escrow to the challenger as a bounty; the remaining 80% stays
-    # in reward_deposited (the funder claims it back via
-    # claim_failed_milestone_refund, not lost) — and the challenge's own
-    # bond ledger is zeroed, proving the zero-then-transfer `_send_gen`
-    # path actually executed for both halves of the payout rather than
-    # just the verdict flag changing.
-    assert milestone["recommended_payout_bps"] == 0
+    assert milestone["status"] == "CHALLENGE_WINDOW"
+    assert milestone["recommended_payout_bps"] == 5000
     reward_wei = 10 * 10**18
-    expected_bounty = reward_wei * 2000 // 10000  # 20% upheld_bounty_bps
-    assert milestone["reward_deposited"] == str(reward_wei - expected_bounty)
+    assert milestone["reward_deposited"] == str(reward_wei)
     challenge = contract.get_challenge(challenge_id)
     assert challenge["bond_deposited"] == "0"
-    assert challenge["status"] == "UPHELD"
-
-    # And the funder can now pull back what's left of the escrow.
-    direct_vm.sender = direct_alice
-    contract.claim_failed_milestone_refund(milestone_id)
-    milestone = contract.get_milestone(milestone_id)
-    assert milestone["reward_deposited"] == "0"
+    assert challenge["status"] == "REJECTED"
 
 
 def test_criterion_that_now_fails_on_recheck_upholds_without_needing_evidence(

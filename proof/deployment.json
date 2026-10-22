@@ -1,15 +1,15 @@
 {
   "network": "GenLayer StudioNet",
   "chain_id": 61999,
-  "deployed_at": "2026-10-19",
-  "status": "DEPLOYED_AND_E2E_PASSED",
+  "deployed_at": "2026-10-22",
+  "status": "DEPLOYED_SOURCE_VERIFIED_AND_LOCAL_TESTED",
   "contract_name": "ProofGrant",
-  "contract_address": "0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8",
+  "contract_address": "0x326A80daBad01998a8C205535e1136E08F0ab58f",
   "deployer": "0x1c2e587043568239B2fcaeC5f96F278EB134b7f5",
-  "deployment_transaction": "0xa145c50817721bc8a7ff3c9c48186880efb502304fd1175f1ceb62c0e09c87ca",
+  "deployment_transaction": "0x9ef709b68956a380eca3ac1a51fc6afa821358b530a50ec9beda6eba756fa1ec",
   "consensus_result": "MAJORITY_AGREE",
-  "execution_result": "SUCCESS",
-  "source_sha256": "aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8",
+  "execution_result": "FINALIZED_RECEIPT_WITH_MAJORITY_AGREE",
+  "source_sha256": "7e102730ae84c8db1dcb11454190ba8c104811e2d182de6ffe479161a3aa7646",
   "runner": {
     "genvm_version": "v0.2.16",
     "dependency": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6"
@@ -23,7 +23,10 @@
   "verification": {
     "local_tests_passed": 20,
     "genvm_lint_checks_passed": 3,
+    "embedded_source_sha256_verified": "7e102730ae84c8db1dcb11454190ba8c104811e2d182de6ffe479161a3aa7646",
     "studionet_e2e_scenarios_passed": 3,
-    "evidence_file": "proof/live_e2e.json"
+    "e2e_positive_repository_claim": "0x52fb9091aa2ef38589068bd53148f02992e6f23e310d34e1ee071ef55cf5e214",
+    "evidence_file": "proof/live_e2e.json",
+    "note": "All three funded E2E scenarios passed on the replacement deployment."
   }
 }

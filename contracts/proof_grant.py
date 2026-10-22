@@ -241,7 +241,10 @@ class Challenge:
     bond_wei: str  # agreed term
     bond_deposited: str  # actual escrow ledger
     category: str  # free-form tag, e.g. "downtime", "git_rewrite", "synthetic_data"
-    evidence_url: str  # ADDITIVE evidence only — never replaces pinned genesis artifacts
+    # Challenger-supplied context only. It is never fetched or used to decide
+    # a verdict, bond return, slash, refund, or bounty: a challenger controls
+    # this URL, so it is not an authoritative evidence source.
+    evidence_url: str
     evidence_note: str
     status: str  # PENDING / UPHELD / REJECTED
     filed_at: u256
@@ -1169,7 +1172,7 @@ class ProofGrant(gl.Contract):
         self._evaluate_milestone(milestone_id)
 
     # ========================================================================
-    # SECTION 5 — CHALLENGE / DISPUTE HANDLING (additive evidence only)
+    # SECTION 5 — CHALLENGE / DISPUTE HANDLING
     # ========================================================================
 
     @gl.public.write.payable
@@ -1241,13 +1244,11 @@ class ProofGrant(gl.Contract):
 
     @gl.public.write
     def resolve_challenge(self, challenge_id: str) -> str:
-        """Re-runs the SAME pinned genesis criteria via the multi-validator
-        inspection, then additionally checks whether the challenger's
-        additive evidence_url independently corroborates a failure of the
-        SPECIFIC disputed criterion (never the milestone in general). The
-        original criteria/artifact locations are never replaced — only
-        additional evidence is consulted, and only to decide whether the
-        original per-criterion result holds.
+        """Re-runs the SAME pinned genesis criteria via multi-validator
+        inspection. Challenger-supplied URLs and notes are retained solely as
+        off-chain review context; they are never fetched or used as economic
+        evidence. An upheld challenge therefore requires an authoritative
+        re-check of the exact immutable criterion to show it now fails.
         """
         challenge = self.challenges.get(challenge_id)
         if challenge is None:
@@ -1257,12 +1258,8 @@ class ProofGrant(gl.Contract):
 
         milestone = self._require_milestone(challenge.milestone_id)
         criteria = [self.criteria[cid] for cid in milestone.criteria_ids]
-        disputed_criterion = self.criteria[challenge.criterion_id]
-
         def leader_fn():
-            base = self._inspect_all_criteria(criteria)
-            evidence_check = self._inspect_bound_evidence(challenge.evidence_url, disputed_criterion)
-            return {"base": base, "evidence": evidence_check}
+            return {"base": self._inspect_all_criteria(criteria)}
 
         def validator_fn(leaders_res: gl.vm.Result) -> bool:
             if not isinstance(leaders_res, gl.vm.Return):
@@ -1281,11 +1278,10 @@ class ProofGrant(gl.Contract):
     ) -> bool:
         """Compare every nondeterministic input used by challenge settlement.
 
-        ``_settle_challenge`` decides whether to pay a challenger bond/bounty
-        from: the rechecked criterion IDs, passed values and reachability;
-        the aggregate reachability flag; and the bound-evidence identity,
-        reachability, anchor binding and corroboration values. Consequently a
-        validator independently recomputes and compares each of those fields.
+        Settlement consumes only the authoritative re-check of immutable,
+        genesis-pinned criteria. Challenger-controlled URLs are deliberately
+        absent: accepting their arbitrary contents as a consensus input could
+        let a third party manufacture a bounty.
         """
         leader_base = leader_data.get("base")
         validator_base = validator_data.get("base")
@@ -1294,83 +1290,10 @@ class ProofGrant(gl.Contract):
         if not self._milestone_consensus_fields_match(leader_base, validator_base):
             return False
 
-        leader_evidence = leader_data.get("evidence")
-        validator_evidence = validator_data.get("evidence")
-        if not isinstance(leader_evidence, dict) or not isinstance(validator_evidence, dict):
-            return False
-
-        # Bind additive evidence to the exact challenge target. Without this
-        # comparison, a leader could present evidence calculated for a
-        # different criterion and still influence the bounty decision.
-        if leader_evidence.get("criterion_id") != disputed_criterion_id:
-            return False
-        if validator_evidence.get("criterion_id") != disputed_criterion_id:
-            return False
-
-        for field in ("criterion_id", "reachable", "anchor_referenced", "corroborates_failure"):
-            if field not in leader_evidence or field not in validator_evidence:
-                return False
-        for field in ("reachable", "anchor_referenced", "corroborates_failure"):
-            if bool(leader_evidence.get(field)) != bool(validator_evidence.get(field)):
-                return False
-
-        return True
-
-    def _get_criterion_anchor(self, criterion) -> str:
-        """The identifying string that ties a piece of evidence to THIS
-        specific pinned criterion, rather than any generic page. Additive
-        evidence must reference this anchor verbatim to be treated as bound
-        — a page that merely contains a generic word like "error" but never
-        mentions the actual disputed URL/repo/contract can never corroborate
-        anything under this scheme.
-        """
-        if criterion.criterion_type == CRITERION_TYPE_HTTP:
-            return criterion.target_url
-        if criterion.criterion_type == CRITERION_TYPE_GIT:
-            return criterion.repo_url
-        return criterion.onchain_contract_address
-
-    def _inspect_bound_evidence(self, evidence_url: str, criterion) -> dict:
-        try:
-            response = gl.nondet.web.get(evidence_url)
-        except Exception:
-            return {
-                "criterion_id": criterion.criterion_id,
-                "reachable": False,
-                "anchor_referenced": False,
-                "corroborates_failure": False,
-            }
-        status = int(getattr(response, "status_code", getattr(response, "status", 0)))
-        body_bytes = getattr(response, "body", b"")
-        try:
-            body_text = body_bytes.decode("utf-8") if isinstance(body_bytes, (bytes, bytearray)) else str(body_bytes)
-        except UnicodeDecodeError:
-            body_text = ""
-        reachable = status == 200
-
-        # Verifiable binding: the evidence page must explicitly reference the
-        # SAME artifact anchor (URL/repo/contract address) as the disputed
-        # criterion. Without this, any generic page containing a failure
-        # keyword could "corroborate" a completely unrelated dispute.
-        anchor = self._get_criterion_anchor(criterion)
-        anchor_referenced = bool(anchor) and anchor in body_text
-
-        # A structured, conservative heuristic: the additive evidence
-        # corroborates a failure only if it is itself reachable, explicitly
-        # references the disputed artifact, AND its content contains a
-        # failure-signal keyword. All three must hold — reachability or a
-        # generic keyword alone is never sufficient. This keeps the check
-        # machine-checkable and reproducible rather than an open-ended LLM
-        # judgment call over free text.
-        lowered = body_text.lower()
-        failure_markers = ("down", "unreachable", "timeout", "error", "outage", "failed", "offline")
-        corroborates = reachable and anchor_referenced and any(marker in lowered for marker in failure_markers)
-        return {
-            "criterion_id": criterion.criterion_id,
-            "reachable": reachable,
-            "anchor_referenced": anchor_referenced,
-            "corroborates_failure": corroborates,
-        }
+        # The disputed ID is deliberately kept as an explicit argument so a
+        # caller cannot accidentally reuse this matcher for a milestone-wide
+        # challenge. The complete base matcher above binds it by position.
+        return any(entry.get("criterion_id") == disputed_criterion_id for entry in leader_base.get("criteria", []))
 
     def _find_result_for_criterion(self, milestone: Milestone, criterion_id: str):
         for result_id in milestone.result_ids:
@@ -1384,20 +1307,7 @@ class ProofGrant(gl.Contract):
         milestone = self.milestones[challenge.milestone_id]
 
         base = result.get("base", {})
-        evidence = result.get("evidence", {})
         base_criteria = base.get("criteria", [])
-        # A corroboration flag is economically meaningful only when it was
-        # produced for this exact disputed criterion and from reachable,
-        # bound evidence. The validator comparison above binds all fields;
-        # repeating the conjunctive guard here keeps settlement safe even if a
-        # malformed result is somehow delivered to this deterministic step.
-        evidence_targets_disputed_criterion = evidence.get("criterion_id") == challenge.criterion_id
-        evidence_corroborates = (
-            evidence_targets_disputed_criterion
-            and bool(evidence.get("reachable", False))
-            and bool(evidence.get("anchor_referenced", False))
-            and bool(evidence.get("corroborates_failure", False))
-        )
 
         # Find the disputed criterion's ORIGINAL result (recorded at claim
         # evaluation time) and its result on THIS re-check.
@@ -1418,17 +1328,11 @@ class ProofGrant(gl.Contract):
         # now fails counts as an independent flip.
         criterion_flipped = original_passed and (not disputed_unreachable) and (not disputed_now_passed)
 
-        # UPHELD only when EITHER:
-        #   (a) an independent re-check of the SPECIFIC disputed criterion
-        #       itself now fails (not merely "the milestone isn't fully
-        #       passing" — unrelated criteria are irrelevant to this
-        #       decision, which is what previously made every challenge
-        #       against a PARTIAL_PASS milestone auto-succeed regardless of
-        #       whether the evidence was relevant), or
-        #   (b) the additive evidence is independently, verifiably BOUND to
-        #       that same criterion's artifact and corroborates a failure —
-        #       never a generic page that merely contains a failure word.
-        upheld = criterion_flipped or evidence_corroborates
+        # Only the authoritative re-check of the exact disputed immutable
+        # criterion may uphold a challenge. In particular, evidence_url is
+        # challenger-controlled context and cannot independently overturn a
+        # still-passing criterion or earn a bounty.
+        upheld = criterion_flipped
 
         bond = _u256_from_str(challenge.bond_deposited)
         challenge.bond_deposited = "0"
@@ -1438,14 +1342,13 @@ class ProofGrant(gl.Contract):
             challenge.resolution_detail = (
                 f"Criterion {challenge.criterion_id} re-check flipped to failing"
                 if criterion_flipped
-                else f"Bound additive evidence corroborated a failure of criterion {challenge.criterion_id}"
+                else "Unreachable: upheld challenges require an authoritative criterion re-check"
             )
             self._settle_upheld_challenge(milestone, challenge, bond)
         else:
             challenge.status = CHALLENGE_STATUS_REJECTED
             challenge.resolution_detail = (
-                f"Criterion {challenge.criterion_id} still passes on re-check and no bound evidence "
-                f"corroborated a failure"
+                f"Criterion {challenge.criterion_id} still passes on authoritative re-check"
             )
             self._settle_rejected_challenge(milestone, challenge, bond)
 

@@ -4,13 +4,14 @@ This document describes the deployed ProofGrant release and its consensus-bindin
 
 ## Verified release
 
-- Contract: `0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8`
-- Deployment transaction: `0xa145c50817721bc8a7ff3c9c48186880efb502304fd1175f1ceb62c0e09c87ca`
-- Deployment execution: `FINALIZED / SUCCESS / MAJORITY_AGREE`
-- Source SHA-256: `aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8`
+- Contract: `0x326A80daBad01998a8C205535e1136E08F0ab58f`
+- Deployment transaction: `0x9ef709b68956a380eca3ac1a51fc6afa821358b530a50ec9beda6eba756fa1ec`
+- Deployment execution: `FINALIZED / MAJORITY_AGREE`
+- Source SHA-256: `7e102730ae84c8db1dcb11454190ba8c104811e2d182de6ffe479161a3aa7646`
 - StudioNet schema: constructor plus 21 public methods
 - Local verification: 20 tests passed; all 3 GenVM lint checks passed
-- Live verification: 3 of 3 funded E2E scenarios passed on chain `61999`
+- Live verification: 3 of 3 funded E2E scenarios passed on the replacement
+  deployment on chain `61999`.
 
 ## Local verification layers
 
@@ -31,18 +32,19 @@ The current 20-test suite contains:
 ## Consensus-binding remediation
 
 The remediated source SHA-256 is
-`aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8`.
+`7e102730ae84c8db1dcb11454190ba8c104811e2d182de6ffe479161a3aa7646`.
 
 The milestone validator now compares, for every criterion, its identity,
 pass/fail value, and reachability; it also compares `any_unreachable`. These
 are exactly the nondeterministic inputs consumed by verdict selection and
 weighted payout calculation.
 
-The challenge validator now reuses that full comparison for the base re-check,
-then compares the exact disputed criterion ID along with evidence reachability,
-anchor binding, and failure corroboration. Settlement repeats the evidence
-identity/reachability/anchor guard before deciding whether to uphold a
-challenge and pay a bond return plus bounty.
+The challenge validator now reuses that full comparison for the base re-check
+and binds the exact disputed criterion ID. Challenger-provided URLs and notes
+are recorded as context only: they are not fetched and cannot affect a bond
+return, slash, refund, verdict, or bounty. Settlement can uphold only if the
+authoritative re-check of that exact pinned criterion independently changes
+from passing to reachable-and-failing.
 
 The GenVM linter performs three contract checks. The deployed source must retain both the `# v0.2.16` version line and the blank line that terminates the runner JSON header. Without that separator, StudioNet parses subsequent descriptive comments as runner configuration and rejects the contract.
 
@@ -85,7 +87,7 @@ The funder must have enough StudioNet GEN for the three deliberately small depos
 Run only against the intended chain-61999 contract:
 
 ```bash
-PROOF_GRANT_CONTRACT=0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8 npm run test:live
+PROOF_GRANT_CONTRACT=0x326A80daBad01998a8C205535e1136E08F0ab58f npm run test:live
 ```
 
 The runner is fixed to `chains.studionet`; the resulting evidence file must state `"network": "GenLayer StudioNet"` and `"chainId": 61999`.

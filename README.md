@@ -4,19 +4,19 @@ ProofGrant is a standalone GenLayer Intelligent Contract for evidence-verified g
 
 ## Release status
 
-The remediated source is deployed and E2E-verified on StudioNet. Its SHA-256
-is `aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8`.
+The challenge-evidence remediation is deployed on StudioNet. Its SHA-256 is
+`7e102730ae84c8db1dcb11454190ba8c104811e2d182de6ffe479161a3aa7646`.
 
 | Field | Value |
 | --- | --- |
 | Network | GenLayer StudioNet |
 | Chain ID | `61999` |
-| Contract | `0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8` |
+| Contract | `0x326A80daBad01998a8C205535e1136E08F0ab58f` |
 | Contract class | `ProofGrant` |
-| Deployment transaction | `0xa145c50817721bc8a7ff3c9c48186880efb502304fd1175f1ceb62c0e09c87ca` |
-| Deployment result | `FINALIZED / SUCCESS / MAJORITY_AGREE` |
+| Deployment transaction | `0x9ef709b68956a380eca3ac1a51fc6afa821358b530a50ec9beda6eba756fa1ec` |
+| Deployment result | `FINALIZED / MAJORITY_AGREE` |
 | Deployer | `0x1c2e587043568239B2fcaeC5f96F278EB134b7f5` |
-| Deployed source SHA-256 | `aebc4c473eea82b405599ea5df2842074e753e47f131f4087d3a441fc56ee0b8` |
+| Deployed source SHA-256 | `7e102730ae84c8db1dcb11454190ba8c104811e2d182de6ffe479161a3aa7646` |
 | GenVM runner | `v0.2.16` |
 | Python dependency | `py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6` |
 | Constructor values | bond `2500000000000000000000` wei; frivolous slash `10000` bps; upheld bounty `2000` bps |
@@ -32,10 +32,13 @@ compares every nondeterministic field that can affect an economic result:
 | --- | --- |
 | Milestone verdict and payout | per-criterion `criterion_id`, `passed`, `unreachable`, plus aggregate `any_unreachable` |
 | Challenge re-check | the same complete base-criterion fields, including reachability |
-| Challenge settlement and bounty | disputed `criterion_id`, evidence `reachable`, `anchor_referenced`, and `corroborates_failure` |
+| Challenge settlement and bounty | the original passing result plus the exact disputed criterion's authoritative re-check (`criterion_id`, `passed`, `unreachable`) |
 
-Diagnostic text and latency are intentionally excluded because the contract
-never uses them to choose a verdict, payout, refund, slash, or bounty.
+Diagnostic text, latency, and challenger-provided URLs/notes are intentionally
+excluded because the contract never uses them to choose a verdict, payout,
+refund, slash, or bounty. A third-party page can therefore not overturn a
+still-passing criterion merely by returning HTTP 200, echoing an anchor, and
+containing a generic failure word.
 
 ## Verified StudioNet E2E results
 
@@ -84,6 +87,6 @@ genvm-lint contracts/proof_grant.py
 
 Expected result for the remediation: `20 passed` and `Lint passed (3 checks)`.
 
-To inspect the deployed release, use StudioNet chain `61999` and address `0x05607023Cce260DBdDe4597ECE740ead5B8aA5B8`.
+To inspect the deployed release, use StudioNet chain `61999` and address `0x326A80daBad01998a8C205535e1136E08F0ab58f`.
 
 See [`docs/TESTING.md`](docs/TESTING.md) for exact live-test prerequisites and safety notes.
